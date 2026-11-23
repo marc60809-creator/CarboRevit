@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CarboRevit: LEED v5 Embodied Carbon &amp; Green Energy Interactive Simulator</title>
+  <title>CarboRevit: LEED v5 Embodied Carbon &amp; Green Energy Simulator</title>
   <script src="https://cdn.tailwindcss.com"></script>
 <style>
   :root {
@@ -18,298 +18,467 @@
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6">
   <div class="max-w-7xl mx-auto space-y-5">
 
-    <!-- Top Header Banner -->
-    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
-            LEED v5 BD+C (MRp2 / MRc2 &amp; EAp1)
-          </span>
-          <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-500/15 text-sky-500 border border-sky-500/30">
-            Schematic Design Stage (LOD 200)
-          </span>
-        </div>
-        <h1 class="text-xl md:text-2xl font-bold mt-2">
-          CarboRevit: LEED v5 Embodied Carbon &amp; Green Energy Simulator
-        </h1>
-        <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-1">
-          Case Model: 8-Story RC Office Building (GFA: 4,800 m² | Roof: 600 m²) — Drag sliders to simulate early-stage What-If material swaps, 3D Carbon Heatmap &amp; LEED v5 credit tiers
-        </p>
+    <!-- Top Navigation Bar (Page 1 vs Page 2) -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+        <span class="font-bold text-sm tracking-wide">CarboRevit • LEED v5 Research Portal</span>
       </div>
-
-      <!-- Preset Buttons -->
       <div class="flex flex-wrap gap-2">
-        <button onclick="applyPreset('baseline')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] bg-[var(--background)] hover:opacity-80 transition">
-          🏢 Baseline Scheme (0 pt)
+        <button id="nav-btn-page1" onclick="switchPage(1)"
+          class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition">
+          🎛️ Page 1: Interactive Carbon Simulator
         </button>
-        <button onclick="applyPreset('tier1')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-sky-500/40 bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition">
-          🌿 Tier 1 Scheme (-15% / 1 pt)
-        </button>
-        <button onclick="applyPreset('tier2')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition">
-          ⚡ Low-Carbon RC (-26% / 2 pts)
-        </button>
-        <button onclick="applyPreset('tier4')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-emerald-500/40 bg-emerald-500/15 text-emerald-500 hover:bg-emerald-500/25 transition">
-          🏆 Max Decarbonization (-45% / 4 pts)
+        <button id="nav-btn-page2" onclick="switchPage(2)"
+          class="px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition">
+          📄 Page 2: English Research Proposal (PDF)
         </button>
       </div>
     </div>
 
-    <!-- Top KPI Scorecard Row -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- KPI 1: Baseline vs Proposed Embodied Carbon -->
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
-        <div class="text-xs font-medium text-[var(--muted-foreground)]">Total Upfront Embodied Carbon (A1–A3)</div>
-        <div class="flex items-baseline gap-2 mt-1">
-          <span id="kpi-proposed-ec" class="text-2xl font-bold">1,057.1</span>
-          <span class="text-xs font-semibold text-[var(--muted-foreground)]">tCO₂e</span>
-        </div>
-        <div class="text-xs text-[var(--muted-foreground)] mt-1">
-          Baseline Reference: <span class="font-semibold">1,248.4 tCO₂e</span>
-        </div>
-        <div class="text-xs text-[var(--muted-foreground)]">
-          Carbon Intensity: <span id="kpi-ec-intensity" class="font-semibold text-[var(--foreground)]">220.2</span> kgCO₂e/m²
-        </div>
-      </div>
+    <!-- ======================================================================= -->
+    <!-- PAGE 1: INTERACTIVE LEED v5 EMBODIED CARBON & GREEN ENERGY SIMULATOR    -->
+    <!-- ======================================================================= -->
+    <div id="page-1-container" class="space-y-5">
 
-      <!-- KPI 2: Embodied Carbon Reduction % -->
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
-        <div class="text-xs font-medium text-[var(--muted-foreground)]">Embodied Carbon Reduction (MRc2)</div>
-        <div class="flex items-baseline gap-2 mt-1">
-          <span id="kpi-reduction-pct" class="text-2xl font-bold text-emerald-500">-15.3%</span>
-          <span id="kpi-saved-tons" class="text-xs font-semibold text-emerald-500">(191.3 t saved)</span>
-        </div>
-        <div class="text-xs text-[var(--muted-foreground)] mt-2">
-          Next Credit Threshold: <span id="kpi-next-tier-hint" class="font-semibold text-[var(--foreground)]">4.7% more for 2 pts</span>
-        </div>
-      </div>
-
-      <!-- KPI 3: LEED v5 MRc2 Points -->
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-[var(--muted-foreground)]">LEED v5 MRc2 Credit Score</span>
-          <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/15 text-emerald-500">MRp2 Met</span>
-        </div>
-        <div class="flex items-baseline gap-2 mt-1">
-          <span id="kpi-mrc2-points" class="text-3xl font-extrabold text-emerald-500">1</span>
-          <span class="text-sm font-semibold text-[var(--muted-foreground)]">/ 4 Points</span>
-        </div>
-        <div id="kpi-mrc2-tier-badge" class="text-xs font-semibold mt-1 text-sky-500">
-          Tier 1 (≥10% Reduction)
-        </div>
-      </div>
-
-      <!-- KPI 4: Operational Green Energy & Carbon -->
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-medium text-[var(--muted-foreground)]">Operational Carbon &amp; Solar PV (EAp1)</span>
-          <span id="kpi-eac1-pts" class="px-2 py-0.5 text-xs font-bold rounded bg-amber-500/15 text-amber-500">Green Energy +1 pt</span>
-        </div>
-        <div class="flex items-baseline gap-2 mt-1">
-          <span id="kpi-op-carbon" class="text-2xl font-bold">265.7</span>
-          <span class="text-xs font-semibold text-[var(--muted-foreground)]">tCO₂e/yr</span>
-        </div>
-        <div class="text-xs text-[var(--muted-foreground)] mt-1">
-          Solar PV Yield: <span id="kpi-pv-kwh" class="font-semibold text-emerald-500">72,150 kWh/yr</span>
-          (<span id="kpi-pv-offset">11.8%</span> offset)
-        </div>
-      </div>
-    </div>
-
-    <!-- LEED v5 MRc2 Tier Progress Gauge (0% to 50%) -->
-    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-        <div class="text-sm font-bold">
-          LEED v5 MRc2 Embodied Carbon Reduction Tiers (10% / 20% / 30% / 40% Benchmarks)
-        </div>
-        <div id="gauge-status-text" class="text-xs font-semibold text-emerald-500">
-          Current Reduction: 15.3% — Exceeds 10% Threshold (1 Point Earned)
-        </div>
-      </div>
-
-      <!-- Progress Bar with Tier Markers at 10%, 20%, 30%, 40% (Scaled 0% to 50%) -->
-      <div class="relative h-6 w-full bg-[var(--background)] border border-[var(--border)] rounded-full overflow-hidden">
-        <div id="tier-progress-fill" class="h-full bg-emerald-500 transition-all duration-200" style="width: 30.6%;"></div>
-        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 20%;"></div>
-        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 40%;"></div>
-        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 60%;"></div>
-        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 80%;"></div>
-      </div>
-
-      <div class="grid grid-cols-5 text-xs text-[var(--muted-foreground)] mt-2 font-medium">
-        <div>0% (MRp2 Only)</div>
-        <div class="text-left">10% → <span class="font-bold text-[var(--foreground)]">1 Point</span></div>
-        <div class="text-left">20% → <span class="font-bold text-[var(--foreground)]">2 Points</span></div>
-        <div class="text-left">30% → <span class="font-bold text-[var(--foreground)]">3 Points</span></div>
-        <div class="text-left">40%+ → <span class="font-bold text-emerald-500">4 Points (Max)</span></div>
-      </div>
-    </div>
-
-    <!-- Main 2-Column Content: Left = Interactive Parameter Sliders, Right = 3D Heatmap & Element Breakdown -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-
-      <!-- Left Column (5 cols): 6 Interactive Design Sliders -->
-      <div class="lg:col-span-5 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-5">
-        <div class="border-b border-[var(--border)] pb-3">
-          <h2 class="text-base font-bold">🎛️ Early-Stage What-If Decarbonization Sliders</h2>
-          <p class="text-xs text-[var(--muted-foreground)] mt-0.5">
-            Adjust LOD 200 parametric rebar, low-carbon material swaps &amp; rooftop solar PV coverage
+      <!-- Top Header Banner -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
+              LEED v5 BD+C (MRp2 / MRc2 &amp; EAp1)
+            </span>
+            <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-500/15 text-sky-500 border border-sky-500/30">
+              Schematic Design Stage (LOD 200)
+            </span>
+          </div>
+          <h1 class="text-xl md:text-2xl font-bold mt-2">
+            CarboRevit: LEED v5 Embodied Carbon &amp; Green Energy Simulator
+          </h1>
+          <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-1">
+            Case Model: 8-Story RC Office Building (GFA: 4,800 m² | Roof: 600 m²) — Drag sliders to simulate early-stage What-If material swaps, 3D Carbon Heatmap &amp; LEED v5 credit tiers
           </p>
         </div>
 
-        <!-- Slider 1: SCM Low-Carbon Concrete Replacement -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs font-semibold">
-            <span>1. Low-Carbon Concrete SCM (Slag / Fly Ash %)</span>
-            <span id="lbl-scm" class="text-emerald-500 font-bold">15% (Concrete GWP -13%)</span>
+        <!-- Preset Buttons -->
+        <div class="flex flex-wrap gap-2">
+          <button onclick="applyPreset('baseline')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] bg-[var(--background)] hover:opacity-80 transition">
+            🏢 Baseline Scheme (0 pt)
+          </button>
+          <button onclick="applyPreset('tier1')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-sky-500/40 bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition">
+            🌿 Tier 1 Scheme (-15% / 1 pt)
+          </button>
+          <button onclick="applyPreset('tier2')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition">
+            ⚡ Low-Carbon RC (-26% / 2 pts)
+          </button>
+          <button onclick="applyPreset('tier4')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-emerald-500/40 bg-emerald-500/15 text-emerald-500 hover:bg-emerald-500/25 transition">
+            🏆 Max Decarbonization (-45% / 4 pts)
+          </button>
+        </div>
+      </div>
+
+      <!-- Top KPI Scorecard Row -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+          <div class="text-xs font-medium text-[var(--muted-foreground)]">Total Upfront Embodied Carbon (A1–A3)</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpi-proposed-ec" class="text-2xl font-bold">1,057.1</span>
+            <span class="text-xs font-semibold text-[var(--muted-foreground)]">tCO₂e</span>
           </div>
-          <input id="slider-scm" type="range" min="0" max="50" step="1" value="15" oninput="updateSimulation()"
-            class="w-full accent-emerald-500 cursor-pointer" />
-          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
-            <span>0% (Ordinary Portland 365 kg/m³)</span>
-            <span>50% (High-SCM Low-Carbon Mix)</span>
+          <div class="text-xs text-[var(--muted-foreground)] mt-1">
+            Baseline Reference: <span class="font-semibold">1,248.4 tCO₂e</span>
+          </div>
+          <div class="text-xs text-[var(--muted-foreground)]">
+            Carbon Intensity: <span id="kpi-ec-intensity" class="font-semibold text-[var(--foreground)]">220.2</span> kgCO₂e/m²
           </div>
         </div>
 
-        <!-- Slider 2: Recycled EAF Rebar Ratio -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs font-semibold">
-            <span>2. Recycled Electric-Arc-Furnace (EAF) Rebar %</span>
-            <span id="lbl-rebar-eaf" class="text-emerald-500 font-bold">30%</span>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+          <div class="text-xs font-medium text-[var(--muted-foreground)]">Embodied Carbon Reduction (MRc2)</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpi-reduction-pct" class="text-2xl font-bold text-emerald-500">-15.3%</span>
+            <span id="kpi-saved-tons" class="text-xs font-semibold text-emerald-500">(191.3 t saved)</span>
           </div>
-          <input id="slider-rebar-eaf" type="range" min="0" max="100" step="5" value="30" oninput="updateSimulation()"
-            class="w-full accent-emerald-500 cursor-pointer" />
-          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
-            <span>0% (Virgin BF Rebar 1.99 kg/kg)</span>
-            <span>100% (Green EAF Rebar 0.95 kg/kg)</span>
+          <div class="text-xs text-[var(--muted-foreground)] mt-2">
+            Next Credit Threshold: <span id="kpi-next-tier-hint" class="font-semibold text-[var(--foreground)]">4.7% more for 2 pts</span>
           </div>
         </div>
 
-        <!-- Slider 3: Mass Timber (CLT / Glulam) Floor & Beam Replacement -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs font-semibold">
-            <span>3. Mass Timber (CLT Slab / Glulam Beam) Swap %</span>
-            <span id="lbl-timber" class="text-sky-500 font-bold">0%</span>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-[var(--muted-foreground)]">LEED v5 MRc2 Credit Score</span>
+            <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/15 text-emerald-500">MRp2 Met</span>
           </div>
-          <input id="slider-timber" type="range" min="0" max="70" step="5" value="0" oninput="updateSimulation()"
-            class="w-full accent-sky-500 cursor-pointer" />
-          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
-            <span>0% (100% All-RC Structure)</span>
-            <span>70% (Hybrid RC Core + CLT Floors)</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpi-mrc2-points" class="text-3xl font-extrabold text-emerald-500">1</span>
+            <span class="text-sm font-semibold text-[var(--muted-foreground)]">/ 4 Points</span>
           </div>
-        </div>
-
-        <!-- Slider 4: LOD 200 Parametric Rebar Ratio Optimization -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs font-semibold">
-            <span>4. LOD 200 Parametric Rebar Density Factor</span>
-            <span id="lbl-rebar-density" class="text-amber-500 font-bold">100% (Standard)</span>
-          </div>
-          <input id="slider-rebar-density" type="range" min="75" max="120" step="5" value="100" oninput="updateSimulation()"
-            class="w-full accent-amber-500 cursor-pointer" />
-          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
-            <span>75% (Span-Optimized Lightweight)</span>
-            <span>120% (Conservative Heavy Rebar)</span>
+          <div id="kpi-mrc2-tier-badge" class="text-xs font-semibold mt-1 text-sky-500">
+            Tier 1 (≥10% Reduction)
           </div>
         </div>
 
-        <!-- Slider 5: Low-Carbon Curtain Wall & Glazing Upgrade -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between text-xs font-semibold">
-            <span>5. Recycled Aluminum &amp; Low-E Facade Carbon Cut</span>
-            <span id="lbl-facade" class="text-sky-500 font-bold">-14%</span>
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-[var(--muted-foreground)]">Operational Carbon &amp; Solar PV (EAp1)</span>
+            <span id="kpi-eac1-pts" class="px-2 py-0.5 text-xs font-bold rounded bg-amber-500/15 text-amber-500">Green Energy +1 pt</span>
           </div>
-          <input id="slider-facade" type="range" min="0" max="45" step="1" value="14" oninput="updateSimulation()"
-            class="w-full accent-sky-500 cursor-pointer" />
-          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
-            <span>0% (Standard Double Glazing)</span>
-            <span>45% (Recycled Frame + Triple Low-E)</span>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpi-op-carbon" class="text-2xl font-bold">265.7</span>
+            <span class="text-xs font-semibold text-[var(--muted-foreground)]">tCO₂e/yr</span>
           </div>
-        </div>
-
-        <!-- Slider 6: Rooftop Solar PV Coverage (Phase 2 Green Energy) -->
-        <div class="space-y-1.5 pt-2 border-t border-[var(--border)]">
-          <div class="flex justify-between text-xs font-semibold">
-            <span>6. Rooftop Solar PV Coverage % (LEED v5 EAp1/EAc1)</span>
-            <span id="lbl-pv" class="text-emerald-500 font-bold">65% (390 m²)</span>
-          </div>
-          <input id="slider-pv" type="range" min="0" max="85" step="5" value="65" oninput="updateSimulation()"
-            class="w-full accent-emerald-500 cursor-pointer" />
-          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
-            <span>0% (No On-Site Renewables)</span>
-            <span>85% (Maximized Rooftop Solar PV)</span>
+          <div class="text-xs text-[var(--muted-foreground)] mt-1">
+            Solar PV Yield: <span id="kpi-pv-kwh" class="font-semibold text-emerald-500">72,150 kWh/yr</span>
+            (<span id="kpi-pv-offset">11.8%</span> offset)
           </div>
         </div>
       </div>
 
-      <!-- Right Column (7 cols): 3D Carbon Heatmap Preview & Category Table -->
-      <div class="lg:col-span-7 space-y-5">
-
-        <!-- Interactive 3D Building Carbon Heatmap Visualizer (Rock et al., 2018) -->
-        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
-            <div>
-              <h2 class="text-base font-bold">🏢 In-Revit 3D Carbon Heatmap Preview (`OverrideGraphicSettings`)</h2>
-              <p class="text-xs text-[var(--muted-foreground)]">
-                Based on Röck et al. (2018): Dynamically color-codes 3D BIM elements into Red (Hotspot), Amber (Medium), and Emerald (Low-Carbon)
-              </p>
-            </div>
-            <div class="flex items-center gap-3 text-xs font-semibold">
-              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-red-500 inline-block"></span>Hotspot</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-amber-500 inline-block"></span>Medium</span>
-              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-emerald-500 inline-block"></span>Low-Carbon</span>
-            </div>
+      <!-- LEED v5 MRc2 Tier Progress Gauge (0% to 50%) -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+          <div class="text-sm font-bold">
+            LEED v5 MRc2 Embodied Carbon Reduction Tiers (10% / 20% / 30% / 40% Benchmarks)
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-            <!-- SVG 3D Building Schematic -->
-            <div class="md:col-span-5 flex justify-center bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
-              <svg viewBox="0 0 260 270" class="w-full max-w-[230px] h-auto">
-                <polygon id="svg-roof" points="130,18 225,62 130,106 35,62" fill="#10b981" fill-opacity="0.85" stroke="#0f172a" stroke-width="1.5" />
-                <text x="130" y="65" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">Roof + Solar PV</text>
-                <polygon id="svg-walls" points="35,62 130,106 130,242 35,198" fill="#10b981" fill-opacity="0.35" stroke="#334155" stroke-width="1.5" />
-                <polygon id="svg-glazing" points="130,106 225,62 225,198 130,242" fill="#f59e0b" fill-opacity="0.40" stroke="#334155" stroke-width="1.5" />
-                <polygon id="svg-floor-1" points="45,105 130,145 215,105 130,65" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
-                <polygon id="svg-floor-2" points="45,148 130,188 215,148 130,108" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
-                <polygon id="svg-floor-3" points="45,191 130,231 215,191 130,151" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
-                <line id="svg-beam-1" x1="45" y1="105" x2="130" y2="145" stroke="#ef4444" stroke-width="4" />
-                <line id="svg-beam-2" x1="130" y1="145" x2="215" y2="105" stroke="#ef4444" stroke-width="4" />
-                <line id="svg-beam-3" x1="45" y1="148" x2="130" y2="188" stroke="#ef4444" stroke-width="4" />
-                <line id="svg-beam-4" x1="130" y1="188" x2="215" y2="148" stroke="#ef4444" stroke-width="4" />
-                <line id="svg-col-1" x1="52" y1="70" x2="52" y2="205" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
-                <line id="svg-col-2" x1="130" y1="106" x2="130" y2="242" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
-                <line id="svg-col-3" x1="208" y1="70" x2="208" y2="205" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
-              </svg>
-            </div>
-
-            <!-- Live Element Heatmap Status Cards -->
-            <div id="heatmap-cards-container" class="md:col-span-7 grid grid-cols-2 gap-2.5"></div>
+          <div id="gauge-status-text" class="text-xs font-semibold text-emerald-500">
+            Current Reduction: 15.3% — Exceeds 10% Threshold (1 Point Earned)
           </div>
         </div>
 
-        <!-- Category Breakdown Table & Bar Chart -->
-        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-          <h2 class="text-base font-bold mb-3">📊 BIM Category Embodied Carbon Breakdown (`FilteredElementCollector`)</h2>
+        <div class="relative h-6 w-full bg-[var(--background)] border border-[var(--border)] rounded-full overflow-hidden">
+          <div id="tier-progress-fill" class="h-full bg-emerald-500 transition-all duration-200" style="width: 30.6%;"></div>
+          <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 20%;"></div>
+          <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 40%;"></div>
+          <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 60%;"></div>
+          <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 80%;"></div>
+        </div>
+
+        <div class="grid grid-cols-5 text-xs text-[var(--muted-foreground)] mt-2 font-medium">
+          <div>0% (MRp2 Only)</div>
+          <div class="text-left">10% → <span class="font-bold text-[var(--foreground)]">1 Point</span></div>
+          <div class="text-left">20% → <span class="font-bold text-[var(--foreground)]">2 Points</span></div>
+          <div class="text-left">30% → <span class="font-bold text-[var(--foreground)]">3 Points</span></div>
+          <div class="text-left">40%+ → <span class="font-bold text-emerald-500">4 Points (Max)</span></div>
+        </div>
+      </div>
+
+      <!-- Main 2-Column Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left Column (5 cols): 6 Interactive Design Sliders -->
+        <div class="lg:col-span-5 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-5">
+          <div class="border-b border-[var(--border)] pb-3">
+            <h2 class="text-base font-bold">🎛️ Early-Stage What-If Decarbonization Sliders</h2>
+            <p class="text-xs text-[var(--muted-foreground)] mt-0.5">
+              Adjust LOD 200 parametric rebar, low-carbon material swaps &amp; rooftop solar PV coverage
+            </p>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>1. Low-Carbon Concrete SCM (Slag / Fly Ash %)</span>
+              <span id="lbl-scm" class="text-emerald-500 font-bold">15% (Concrete GWP -13%)</span>
+            </div>
+            <input id="slider-scm" type="range" min="0" max="50" step="1" value="15" oninput="updateSimulation()"
+              class="w-full accent-emerald-500 cursor-pointer" />
+            <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+              <span>0% (Ordinary Portland 365 kg/m³)</span>
+              <span>50% (High-SCM Low-Carbon Mix)</span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>2. Recycled Electric-Arc-Furnace (EAF) Rebar %</span>
+              <span id="lbl-rebar-eaf" class="text-emerald-500 font-bold">30%</span>
+            </div>
+            <input id="slider-rebar-eaf" type="range" min="0" max="100" step="5" value="30" oninput="updateSimulation()"
+              class="w-full accent-emerald-500 cursor-pointer" />
+            <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+              <span>0% (Virgin BF Rebar 1.99 kg/kg)</span>
+              <span>100% (Green EAF Rebar 0.95 kg/kg)</span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>3. Mass Timber (CLT Slab / Glulam Beam) Swap %</span>
+              <span id="lbl-timber" class="text-sky-500 font-bold">0%</span>
+            </div>
+            <input id="slider-timber" type="range" min="0" max="70" step="5" value="0" oninput="updateSimulation()"
+              class="w-full accent-sky-500 cursor-pointer" />
+            <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+              <span>0% (100% All-RC Structure)</span>
+              <span>70% (Hybrid RC Core + CLT Floors)</span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>4. LOD 200 Parametric Rebar Density Factor</span>
+              <span id="lbl-rebar-density" class="text-amber-500 font-bold">100% (Standard)</span>
+            </div>
+            <input id="slider-rebar-density" type="range" min="75" max="120" step="5" value="100" oninput="updateSimulation()"
+              class="w-full accent-amber-500 cursor-pointer" />
+            <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+              <span>75% (Span-Optimized Lightweight)</span>
+              <span>120% (Conservative Heavy Rebar)</span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>5. Recycled Aluminum &amp; Low-E Facade Carbon Cut</span>
+              <span id="lbl-facade" class="text-sky-500 font-bold">-14%</span>
+            </div>
+            <input id="slider-facade" type="range" min="0" max="45" step="1" value="14" oninput="updateSimulation()"
+              class="w-full accent-sky-500 cursor-pointer" />
+            <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+              <span>0% (Standard Double Glazing)</span>
+              <span>45% (Recycled Frame + Triple Low-E)</span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 pt-2 border-t border-[var(--border)]">
+            <div class="flex justify-between text-xs font-semibold">
+              <span>6. Rooftop Solar PV Coverage % (LEED v5 EAp1/EAc1)</span>
+              <span id="lbl-pv" class="text-emerald-500 font-bold">65% (390 m²)</span>
+            </div>
+            <input id="slider-pv" type="range" min="0" max="85" step="5" value="65" oninput="updateSimulation()"
+              class="w-full accent-emerald-500 cursor-pointer" />
+            <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+              <span>0% (No On-Site Renewables)</span>
+              <span>85% (Maximized Rooftop Solar PV)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column (7 cols): 3D Carbon Heatmap Preview & Category Table -->
+        <div class="lg:col-span-7 space-y-5">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <h2 class="text-base font-bold">🏢 In-Revit 3D Carbon Heatmap Preview (`OverrideGraphicSettings`)</h2>
+                <p class="text-xs text-[var(--muted-foreground)]">
+                  Based on Röck et al. (2018): Dynamically color-codes 3D BIM elements into Red (Hotspot), Amber (Medium), and Emerald (Low-Carbon)
+                </p>
+              </div>
+              <div class="flex items-center gap-3 text-xs font-semibold">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-red-500 inline-block"></span>Hotspot</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-amber-500 inline-block"></span>Medium</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-emerald-500 inline-block"></span>Low-Carbon</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+              <div class="md:col-span-5 flex justify-center bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+                <svg viewBox="0 0 260 270" class="w-full max-w-[230px] h-auto">
+                  <polygon id="svg-roof" points="130,18 225,62 130,106 35,62" fill="#10b981" fill-opacity="0.85" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="130" y="65" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">Roof + Solar PV</text>
+                  <polygon id="svg-walls" points="35,62 130,106 130,242 35,198" fill="#10b981" fill-opacity="0.35" stroke="#334155" stroke-width="1.5" />
+                  <polygon id="svg-glazing" points="130,106 225,62 225,198 130,242" fill="#f59e0b" fill-opacity="0.40" stroke="#334155" stroke-width="1.5" />
+                  <polygon id="svg-floor-1" points="45,105 130,145 215,105 130,65" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
+                  <polygon id="svg-floor-2" points="45,148 130,188 215,148 130,108" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
+                  <polygon id="svg-floor-3" points="45,191 130,231 215,191 130,151" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
+                  <line id="svg-beam-1" x1="45" y1="105" x2="130" y2="145" stroke="#ef4444" stroke-width="4" />
+                  <line id="svg-beam-2" x1="130" y1="145" x2="215" y2="105" stroke="#ef4444" stroke-width="4" />
+                  <line id="svg-beam-3" x1="45" y1="148" x2="130" y2="188" stroke="#ef4444" stroke-width="4" />
+                  <line id="svg-beam-4" x1="130" y1="188" x2="215" y2="148" stroke="#ef4444" stroke-width="4" />
+                  <line id="svg-col-1" x1="52" y1="70" x2="52" y2="205" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
+                  <line id="svg-col-2" x1="130" y1="106" x2="130" y2="242" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
+                  <line id="svg-col-3" x1="208" y1="70" x2="208" y2="205" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
+                </svg>
+              </div>
+              <div id="heatmap-cards-container" class="md:col-span-7 grid grid-cols-2 gap-2.5"></div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <h2 class="text-base font-bold mb-3">📊 BIM Category Embodied Carbon Breakdown (`FilteredElementCollector`)</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
+                    <th class="py-2 pr-2">Revit BuiltInCategory</th>
+                    <th class="py-2 px-2 text-right">Baseline (t)</th>
+                    <th class="py-2 px-2 text-right">Proposed (t)</th>
+                    <th class="py-2 px-2 text-right">Reduction (%)</th>
+                    <th class="py-2 pl-2 w-36">Relative Carbon Impact</th>
+                  </tr>
+                </thead>
+                <tbody id="category-table-body" class="divide-y divide-[var(--border)]"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- PAGE 2: ENGLISH RESEARCH PROPOSAL & LITERATURE REVIEW (PDF + WEB VIEW)  -->
+    <!-- ======================================================================= -->
+    <div id="page-2-container" class="hidden space-y-5">
+
+      <!-- Page 2 Action Header -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
+            Master's Research Proposal • Full English Document
+          </span>
+          <h1 class="text-xl md:text-2xl font-bold mt-2">
+            Development of a BIM Plugin for Automated LEED v5 Carbon &amp; Green Energy Assessment
+          </h1>
+          <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-1">
+            Project Team: Chu-Shian Tsau (M11513039), Khaing Thinzar (D11513802), Chin-Yi Yang (R14544029)
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="Research_Proposal_For_Professor_EN.pdf" target="_blank" download
+            class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition inline-flex items-center gap-1.5">
+            ⬇️ Download English Proposal (.PDF)
+          </a>
+          <a href="Research_Proposal_For_Professor_EN.docx" target="_blank" download
+            class="px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] hover:opacity-80 transition inline-flex items-center gap-1.5">
+            📝 Download Word (.DOCX)
+          </a>
+        </div>
+      </div>
+
+      <!-- Embedded PDF Viewer Box -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-[var(--muted-foreground)]">📄 Embedded PDF Preview (Research_Proposal_For_Professor_EN.pdf)</span>
+          <a href="Research_Proposal_For_Professor_EN.pdf" target="_blank" class="text-xs font-semibold text-sky-500 hover:underline">
+            Open PDF in Full Tab ↗
+          </a>
+        </div>
+        <div class="w-full h-[560px] rounded-lg overflow-hidden border border-[var(--border)] bg-[var(--background)]">
+          <iframe src="Research_Proposal_For_Professor_EN.pdf" class="w-full h-full" title="English Research Proposal PDF"></iframe>
+        </div>
+      </div>
+
+      <!-- Complete Interactive Web-Rendered Proposal (For Mobile & Instant Reading) -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm space-y-6">
+        <div class="border-b border-[var(--border)] pb-4">
+          <h2 class="text-lg font-bold text-emerald-500">1. Research Background &amp; Motivation</h2>
+          <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">
+            The U.S. Green Building Council (USGBC) <strong>LEED v5</strong> shifts green building certification from traditional energy cost savings toward <strong>whole-life decarbonization</strong> (accounting for 50% of total points). Quantifying cradle-to-gate (Modules A1–A3) structure and enclosure embodied carbon is now a mandatory prerequisite (<strong>MRp2</strong>), while <strong>MRc2</strong> rewards <strong>10%, 20%, 30%, and 40%</strong> carbon reductions against baseline buildings with 1 to 4 credit points. Furthermore, <strong>EAp1 &amp; EAc1</strong> mandate early operational carbon projections and incentivize on-site renewable energy (Rooftop Solar PV).
+          </p>
+          <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">
+            Up to <strong>80% of embodied carbon reduction potential is locked in during Schematic Design (LOD 100–200)</strong>. However, traditional workflows require exporting Revit schedules to Excel (~16 hours per iteration with a 30% conversion error rate) or exporting <code>gbXML</code> files that frequently fail due to unenclosed early-stage thermal zones.
+          </p>
+        </div>
+
+        <!-- Section 2: 4 Bottlenecks Table -->
+        <div>
+          <h2 class="text-lg font-bold text-emerald-500 mb-3">2. Four Schematic Design (LOD 100–200) Bottlenecks &amp; CarboRevit Solutions</h2>
           <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left border-collapse">
+            <table class="w-full text-xs text-left border-collapse border border-[var(--border)]">
               <thead>
-                <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
-                  <th class="py-2 pr-2">Revit BuiltInCategory</th>
-                  <th class="py-2 px-2 text-right">Baseline (t)</th>
-                  <th class="py-2 px-2 text-right">Proposed (t)</th>
-                  <th class="py-2 px-2 text-right">Reduction (%)</th>
-                  <th class="py-2 pl-2 w-36">Relative Carbon Impact</th>
+                <tr class="bg-[var(--background)] text-[var(--foreground)] border-b border-[var(--border)]">
+                  <th class="p-3 border-r border-[var(--border)] w-1/4">Early-Stage Bottleneck (LOD 100–200)</th>
+                  <th class="p-3 border-r border-[var(--border)] w-1/3">Why Traditional BIM Workflows Fail</th>
+                  <th class="p-3">CarboRevit Technical Solution</th>
                 </tr>
               </thead>
-              <tbody id="category-table-body" class="divide-y divide-[var(--border)]"></tbody>
+              <tbody class="divide-y divide-[var(--border)]">
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">1. Missing 3D Rebar Geometry<br/><span class="text-red-500 font-normal">(30%–40% Carbon Omission)</span></td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Schematic BIM models only contain rough concrete volumes; 3D reinforcing bars are not modeled until LOD 350+, causing severe underestimation of RC carbon.</td>
+                  <td class="p-3"><strong>Parametric Rebar Ratio Imputation</strong>: Embeds standard structural rebar densities (Column 150, Beam 130, Slab 95 kg/m³) in the database to automatically compute combined concrete + steel carbon.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">2. Unspecified Generic Materials<br/><span class="text-amber-500 font-normal">(Material Uncertainty)</span></td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Architects use generic default Revit materials during massing without specific manufacturer EPDs or LEED v5 baseline references.</td>
+                  <td class="p-3"><strong>Zero-Template Category Mapping &amp; What-If Swap</strong>: Maps <code>BuiltInCategory</code> directly to LEED v5 regional baselines and enables 1-click swaps (High-SCM Slag Concrete, EAF Rebar, CLT Mass Timber).</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">3. Broken gbXML Energy Exports<br/><span class="text-sky-500 font-normal">(Unenclosed Thermal Zones)</span></td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Frequent massing iterations and unenclosed rooms cause <code>gbXML</code> exports to external BEM engines (IES-VE, EnergyPlus) to fail.</td>
+                  <td class="p-3"><strong>Direct API Envelope &amp; Solar PV Heuristic Engine</strong>: Extracts wall, window, and roof areas directly via Revit API to compute WWR, EUI, and rooftop Solar PV green energy offsets in under 3 seconds.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">4. Blind Design Iteration<br/><span class="text-emerald-500 font-normal">(No Spatial Hotspot Feedback)</span></td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Spreadsheet totals fail to inform architects which specific 3D building elements drive carbon spikes.</td>
+                  <td class="p-3"><strong>In-Viewport 3D Carbon Heatmap</strong>: Uses <code>OverrideGraphicSettings</code> (Röck et al., 2018) to color-code top 20% carbon hotspots in Red, middle 50% in Amber, and lowest 30% in Emerald Green.</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
 
+        <!-- Section 3: Golden 3 Papers -->
+        <div>
+          <h2 class="text-lg font-bold text-emerald-500 mb-3">3. Golden 3 Benchmark Papers for Thesis Development</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse border border-[var(--border)]">
+              <thead>
+                <tr class="bg-[var(--background)] text-[var(--foreground)] border-b border-[var(--border)]">
+                  <th class="p-3 border-r border-[var(--border)]">Benchmark Role &amp; Authors</th>
+                  <th class="p-3 border-r border-[var(--border)]">Paper Title, Journal &amp; DOI</th>
+                  <th class="p-3 border-r border-[var(--border)]">Methodology Adopted</th>
+                  <th class="p-3">Our Innovation (Research Gap)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[var(--border)]">
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">Pillar 1: Plugin Architecture<br/><span class="text-sky-500">Jalaei &amp; Jrade (2015)</span></td>
+                  <td class="p-3 border-r border-[var(--border)]"><em>Integrating BIM and LEED system at the conceptual design stage of sustainable buildings</em> (Sustainable Cities and Society)<br/>DOI: 10.1016/j.scs.2015.06.007</td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Four-tier Revit API (C# .NET) quantity takeoff, external database lookup, and in-Revit automated LEED credit scoring UI.</td>
+                  <td class="p-3">Upgrades legacy LEED v3/v4 rules to <strong>LEED v5 mandatory carbon prerequisites &amp; tiers (MRp2/MRc2 &amp; EAp1)</strong>.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">Pillar 2: 3D Carbon Heatmap<br/><span class="text-emerald-500">Röck et al. (2018)</span></td>
+                  <td class="p-3 border-r border-[var(--border)]"><em>LCA and BIM: Visualization of environmental potentials in building construction at early design stages</em> (Building and Environment)<br/>DOI: 10.1016/j.buildenv.2018.05.006</td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Early-stage BIM element-to-LCA mapping formulation and <strong>3D viewport color-coding (3D Heatmap)</strong> to identify high-impact hotspots.</td>
+                  <td class="p-3">Couples 3D visualization directly with <strong>LEED v5 Baseline percentage reduction tiers (10%/20%/30%/40%)</strong>.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-r border-[var(--border)] font-bold">Pillar 3: Carbon Swap Case Study<br/><span class="text-amber-500">Alzara et al. (2023) &amp; Hsieh (NTU, 2026)</span></td>
+                  <td class="p-3 border-r border-[var(--border)]"><em>Dynamo script and a BIM-based process for measuring embodied carbon in buildings during the design phase</em> (Int. J. Low-Carbon Technologies)<br/>DOI: 10.1093/ijlct/ctad053</td>
+                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Embodied carbon CSV database structure, early-stage structural rebar estimation, and Chapter 5 element breakdown &amp; material swap comparison charts.</td>
+                  <td class="p-3">Unifies <strong>Upfront Embodied Carbon (MR)</strong> and <strong>Rooftop Solar PV Operational Green Energy (EA)</strong> in one native plugin.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Section 4: Key Questions for Advisor -->
+        <div>
+          <h2 class="text-lg font-bold text-emerald-500 mb-2">4. Key Questions for Advisor Discussion</h2>
+          <ul class="list-disc list-inside text-xs md:text-sm text-[var(--muted-foreground)] space-y-1.5">
+            <li><strong>Research Scope Weighting</strong>: Focusing ~80% of the thesis on Phase 1 (Schematic Design LOD 200 Embodied Carbon MRp2/MRc2, parametric rebar imputation, 3D Heatmap, and What-If material swap) with Phase 2 (Operational Green Energy EAp1/EAc1) as a complementary module.</li>
+            <li><strong>Database Architecture</strong>: Using the curated local CSV baseline (<code>leed_v5_carbon_baseline.csv</code> combining CLF/EC3 &amp; local ABRI factors) for offline reliability during the MVP stage.</li>
+            <li><strong>Element Scope</strong>: Targeting the top 6 Revit categories (Floors, Beams, Columns, Walls, Glazing, Roofs) representing &gt;80% of building carbon impact.</li>
+            <li><strong>Plugin Implementation Framework</strong>: Choosing between our completed <code>pyRevit (Python)</code> prototype vs. compiled <code>C# .NET (IExternalCommand)</code> add-in for final demonstration.</li>
+          </ul>
+        </div>
       </div>
+
     </div>
+
   </div>
 
   <script>
+    function switchPage(pageNum) {
+      const p1 = document.getElementById('page-1-container');
+      const p2 = document.getElementById('page-2-container');
+      const btn1 = document.getElementById('nav-btn-page1');
+      const btn2 = document.getElementById('nav-btn-page2');
+
+      if (pageNum === 1) {
+        p1.classList.remove('hidden');
+        p2.classList.add('hidden');
+        btn1.className = 'px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition';
+        btn2.className = 'px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition';
+      } else {
+        p1.classList.add('hidden');
+        p2.classList.remove('hidden');
+        btn2.className = 'px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition';
+        btn1.className = 'px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition';
+      }
+    }
+
     const BUILDING_GFA_M2 = 4800.0;
     const ROOF_AREA_M2 = 600.0;
     const BASELINE_REBAR_GWP = 1.99;
