@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarboRevit: LEED v5 Embodied Carbon &amp; Green Energy Interactive Simulator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --background: #0f172a;
+    --card: #1e293b;
+    --foreground: #f8fafc;
+    --muted-foreground: #94a3b8;
+    --border: #334155;
+  }
+</style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6">
+  <div class="max-w-7xl mx-auto space-y-5">
+
+    <!-- Top Header Banner -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
+            LEED v5 BD+C (MRp2 / MRc2 &amp; EAp1)
+          </span>
+          <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-500/15 text-sky-500 border border-sky-500/30">
+            Schematic Design Stage (LOD 200)
+          </span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-bold mt-2">
+          CarboRevit: LEED v5 Embodied Carbon &amp; Green Energy Simulator
+        </h1>
+        <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-1">
+          Case Model: 8-Story RC Office Building (GFA: 4,800 m² | Roof: 600 m²) — Drag sliders to simulate early-stage What-If material swaps, 3D Carbon Heatmap &amp; LEED v5 credit tiers
+        </p>
+      </div>
+
+      <!-- Preset Buttons -->
+      <div class="flex flex-wrap gap-2">
+        <button onclick="applyPreset('baseline')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-[var(--border)] bg-[var(--background)] hover:opacity-80 transition">
+          🏢 Baseline Scheme (0 pt)
+        </button>
+        <button onclick="applyPreset('tier1')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-sky-500/40 bg-sky-500/10 text-sky-500 hover:bg-sky-500/20 transition">
+          🌿 Tier 1 Scheme (-15% / 1 pt)
+        </button>
+        <button onclick="applyPreset('tier2')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-amber-500/40 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition">
+          ⚡ Low-Carbon RC (-26% / 2 pts)
+        </button>
+        <button onclick="applyPreset('tier4')" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-emerald-500/40 bg-emerald-500/15 text-emerald-500 hover:bg-emerald-500/25 transition">
+          🏆 Max Decarbonization (-45% / 4 pts)
+        </button>
+      </div>
+    </div>
+
+    <!-- Top KPI Scorecard Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- KPI 1: Baseline vs Proposed Embodied Carbon -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+        <div class="text-xs font-medium text-[var(--muted-foreground)]">Total Upfront Embodied Carbon (A1–A3)</div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="kpi-proposed-ec" class="text-2xl font-bold">1,057.1</span>
+          <span class="text-xs font-semibold text-[var(--muted-foreground)]">tCO₂e</span>
+        </div>
+        <div class="text-xs text-[var(--muted-foreground)] mt-1">
+          Baseline Reference: <span class="font-semibold">1,248.4 tCO₂e</span>
+        </div>
+        <div class="text-xs text-[var(--muted-foreground)]">
+          Carbon Intensity: <span id="kpi-ec-intensity" class="font-semibold text-[var(--foreground)]">220.2</span> kgCO₂e/m²
+        </div>
+      </div>
+
+      <!-- KPI 2: Embodied Carbon Reduction % -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+        <div class="text-xs font-medium text-[var(--muted-foreground)]">Embodied Carbon Reduction (MRc2)</div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="kpi-reduction-pct" class="text-2xl font-bold text-emerald-500">-15.3%</span>
+          <span id="kpi-saved-tons" class="text-xs font-semibold text-emerald-500">(191.3 t saved)</span>
+        </div>
+        <div class="text-xs text-[var(--muted-foreground)] mt-2">
+          Next Credit Threshold: <span id="kpi-next-tier-hint" class="font-semibold text-[var(--foreground)]">4.7% more for 2 pts</span>
+        </div>
+      </div>
+
+      <!-- KPI 3: LEED v5 MRc2 Points -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-[var(--muted-foreground)]">LEED v5 MRc2 Credit Score</span>
+          <span class="px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/15 text-emerald-500">MRp2 Met</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="kpi-mrc2-points" class="text-3xl font-extrabold text-emerald-500">1</span>
+          <span class="text-sm font-semibold text-[var(--muted-foreground)]">/ 4 Points</span>
+        </div>
+        <div id="kpi-mrc2-tier-badge" class="text-xs font-semibold mt-1 text-sky-500">
+          Tier 1 (≥10% Reduction)
+        </div>
+      </div>
+
+      <!-- KPI 4: Operational Green Energy & Carbon -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-medium text-[var(--muted-foreground)]">Operational Carbon &amp; Solar PV (EAp1)</span>
+          <span id="kpi-eac1-pts" class="px-2 py-0.5 text-xs font-bold rounded bg-amber-500/15 text-amber-500">Green Energy +1 pt</span>
+        </div>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="kpi-op-carbon" class="text-2xl font-bold">265.7</span>
+          <span class="text-xs font-semibold text-[var(--muted-foreground)]">tCO₂e/yr</span>
+        </div>
+        <div class="text-xs text-[var(--muted-foreground)] mt-1">
+          Solar PV Yield: <span id="kpi-pv-kwh" class="font-semibold text-emerald-500">72,150 kWh/yr</span>
+          (<span id="kpi-pv-offset">11.8%</span> offset)
+        </div>
+      </div>
+    </div>
+
+    <!-- LEED v5 MRc2 Tier Progress Gauge (0% to 50%) -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <div class="text-sm font-bold">
+          LEED v5 MRc2 Embodied Carbon Reduction Tiers (10% / 20% / 30% / 40% Benchmarks)
+        </div>
+        <div id="gauge-status-text" class="text-xs font-semibold text-emerald-500">
+          Current Reduction: 15.3% — Exceeds 10% Threshold (1 Point Earned)
+        </div>
+      </div>
+
+      <!-- Progress Bar with Tier Markers at 10%, 20%, 30%, 40% (Scaled 0% to 50%) -->
+      <div class="relative h-6 w-full bg-[var(--background)] border border-[var(--border)] rounded-full overflow-hidden">
+        <div id="tier-progress-fill" class="h-full bg-emerald-500 transition-all duration-200" style="width: 30.6%;"></div>
+        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 20%;"></div>
+        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 40%;"></div>
+        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 60%;"></div>
+        <div class="absolute top-0 bottom-0 border-l-2 border-dashed border-[var(--foreground)]/40" style="left: 80%;"></div>
+      </div>
+
+      <div class="grid grid-cols-5 text-xs text-[var(--muted-foreground)] mt-2 font-medium">
+        <div>0% (MRp2 Only)</div>
+        <div class="text-left">10% → <span class="font-bold text-[var(--foreground)]">1 Point</span></div>
+        <div class="text-left">20% → <span class="font-bold text-[var(--foreground)]">2 Points</span></div>
+        <div class="text-left">30% → <span class="font-bold text-[var(--foreground)]">3 Points</span></div>
+        <div class="text-left">40%+ → <span class="font-bold text-emerald-500">4 Points (Max)</span></div>
+      </div>
+    </div>
+
+    <!-- Main 2-Column Content: Left = Interactive Parameter Sliders, Right = 3D Heatmap & Element Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+      <!-- Left Column (5 cols): 6 Interactive Design Sliders -->
+      <div class="lg:col-span-5 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-5">
+        <div class="border-b border-[var(--border)] pb-3">
+          <h2 class="text-base font-bold">🎛️ Early-Stage What-If Decarbonization Sliders</h2>
+          <p class="text-xs text-[var(--muted-foreground)] mt-0.5">
+            Adjust LOD 200 parametric rebar, low-carbon material swaps &amp; rooftop solar PV coverage
+          </p>
+        </div>
+
+        <!-- Slider 1: SCM Low-Carbon Concrete Replacement -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-semibold">
+            <span>1. Low-Carbon Concrete SCM (Slag / Fly Ash %)</span>
+            <span id="lbl-scm" class="text-emerald-500 font-bold">15% (Concrete GWP -13%)</span>
+          </div>
+          <input id="slider-scm" type="range" min="0" max="50" step="1" value="15" oninput="updateSimulation()"
+            class="w-full accent-emerald-500 cursor-pointer" />
+          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <span>0% (Ordinary Portland 365 kg/m³)</span>
+            <span>50% (High-SCM Low-Carbon Mix)</span>
+          </div>
+        </div>
+
+        <!-- Slider 2: Recycled EAF Rebar Ratio -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-semibold">
+            <span>2. Recycled Electric-Arc-Furnace (EAF) Rebar %</span>
+            <span id="lbl-rebar-eaf" class="text-emerald-500 font-bold">30%</span>
+          </div>
+          <input id="slider-rebar-eaf" type="range" min="0" max="100" step="5" value="30" oninput="updateSimulation()"
+            class="w-full accent-emerald-500 cursor-pointer" />
+          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <span>0% (Virgin BF Rebar 1.99 kg/kg)</span>
+            <span>100% (Green EAF Rebar 0.95 kg/kg)</span>
+          </div>
+        </div>
+
+        <!-- Slider 3: Mass Timber (CLT / Glulam) Floor & Beam Replacement -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-semibold">
+            <span>3. Mass Timber (CLT Slab / Glulam Beam) Swap %</span>
+            <span id="lbl-timber" class="text-sky-500 font-bold">0%</span>
+          </div>
+          <input id="slider-timber" type="range" min="0" max="70" step="5" value="0" oninput="updateSimulation()"
+            class="w-full accent-sky-500 cursor-pointer" />
+          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <span>0% (100% All-RC Structure)</span>
+            <span>70% (Hybrid RC Core + CLT Floors)</span>
+          </div>
+        </div>
+
+        <!-- Slider 4: LOD 200 Parametric Rebar Ratio Optimization -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-semibold">
+            <span>4. LOD 200 Parametric Rebar Density Factor</span>
+            <span id="lbl-rebar-density" class="text-amber-500 font-bold">100% (Standard)</span>
+          </div>
+          <input id="slider-rebar-density" type="range" min="75" max="120" step="5" value="100" oninput="updateSimulation()"
+            class="w-full accent-amber-500 cursor-pointer" />
+          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <span>75% (Span-Optimized Lightweight)</span>
+            <span>120% (Conservative Heavy Rebar)</span>
+          </div>
+        </div>
+
+        <!-- Slider 5: Low-Carbon Curtain Wall & Glazing Upgrade -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between text-xs font-semibold">
+            <span>5. Recycled Aluminum &amp; Low-E Facade Carbon Cut</span>
+            <span id="lbl-facade" class="text-sky-500 font-bold">-14%</span>
+          </div>
+          <input id="slider-facade" type="range" min="0" max="45" step="1" value="14" oninput="updateSimulation()"
+            class="w-full accent-sky-500 cursor-pointer" />
+          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <span>0% (Standard Double Glazing)</span>
+            <span>45% (Recycled Frame + Triple Low-E)</span>
+          </div>
+        </div>
+
+        <!-- Slider 6: Rooftop Solar PV Coverage (Phase 2 Green Energy) -->
+        <div class="space-y-1.5 pt-2 border-t border-[var(--border)]">
+          <div class="flex justify-between text-xs font-semibold">
+            <span>6. Rooftop Solar PV Coverage % (LEED v5 EAp1/EAc1)</span>
+            <span id="lbl-pv" class="text-emerald-500 font-bold">65% (390 m²)</span>
+          </div>
+          <input id="slider-pv" type="range" min="0" max="85" step="5" value="65" oninput="updateSimulation()"
+            class="w-full accent-emerald-500 cursor-pointer" />
+          <div class="flex justify-between text-xs text-[var(--muted-foreground)]">
+            <span>0% (No On-Site Renewables)</span>
+            <span>85% (Maximized Rooftop Solar PV)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column (7 cols): 3D Carbon Heatmap Preview & Category Table -->
+      <div class="lg:col-span-7 space-y-5">
+
+        <!-- Interactive 3D Building Carbon Heatmap Visualizer (Rock et al., 2018) -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold">🏢 In-Revit 3D Carbon Heatmap Preview (`OverrideGraphicSettings`)</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Based on Röck et al. (2018): Dynamically color-codes 3D BIM elements into Red (Hotspot), Amber (Medium), and Emerald (Low-Carbon)
+              </p>
+            </div>
+            <div class="flex items-center gap-3 text-xs font-semibold">
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-red-500 inline-block"></span>Hotspot</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-amber-500 inline-block"></span>Medium</span>
+              <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-emerald-500 inline-block"></span>Low-Carbon</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <!-- SVG 3D Building Schematic -->
+            <div class="md:col-span-5 flex justify-center bg-[var(--background)] border border-[var(--border)] rounded-lg p-3">
+              <svg viewBox="0 0 260 270" class="w-full max-w-[230px] h-auto">
+                <polygon id="svg-roof" points="130,18 225,62 130,106 35,62" fill="#10b981" fill-opacity="0.85" stroke="#0f172a" stroke-width="1.5" />
+                <text x="130" y="65" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold">Roof + Solar PV</text>
+                <polygon id="svg-walls" points="35,62 130,106 130,242 35,198" fill="#10b981" fill-opacity="0.35" stroke="#334155" stroke-width="1.5" />
+                <polygon id="svg-glazing" points="130,106 225,62 225,198 130,242" fill="#f59e0b" fill-opacity="0.40" stroke="#334155" stroke-width="1.5" />
+                <polygon id="svg-floor-1" points="45,105 130,145 215,105 130,65" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
+                <polygon id="svg-floor-2" points="45,148 130,188 215,148 130,108" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
+                <polygon id="svg-floor-3" points="45,191 130,231 215,191 130,151" fill="#ef4444" fill-opacity="0.82" stroke="#1e293b" stroke-width="1.2" />
+                <line id="svg-beam-1" x1="45" y1="105" x2="130" y2="145" stroke="#ef4444" stroke-width="4" />
+                <line id="svg-beam-2" x1="130" y1="145" x2="215" y2="105" stroke="#ef4444" stroke-width="4" />
+                <line id="svg-beam-3" x1="45" y1="148" x2="130" y2="188" stroke="#ef4444" stroke-width="4" />
+                <line id="svg-beam-4" x1="130" y1="188" x2="215" y2="148" stroke="#ef4444" stroke-width="4" />
+                <line id="svg-col-1" x1="52" y1="70" x2="52" y2="205" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
+                <line id="svg-col-2" x1="130" y1="106" x2="130" y2="242" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
+                <line id="svg-col-3" x1="208" y1="70" x2="208" y2="205" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" />
+              </svg>
+            </div>
+
+            <!-- Live Element Heatmap Status Cards -->
+            <div id="heatmap-cards-container" class="md:col-span-7 grid grid-cols-2 gap-2.5"></div>
+          </div>
+        </div>
+
+        <!-- Category Breakdown Table & Bar Chart -->
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <h2 class="text-base font-bold mb-3">📊 BIM Category Embodied Carbon Breakdown (`FilteredElementCollector`)</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
+                  <th class="py-2 pr-2">Revit BuiltInCategory</th>
+                  <th class="py-2 px-2 text-right">Baseline (t)</th>
+                  <th class="py-2 px-2 text-right">Proposed (t)</th>
+                  <th class="py-2 px-2 text-right">Reduction (%)</th>
+                  <th class="py-2 pl-2 w-36">Relative Carbon Impact</th>
+                </tr>
+              </thead>
+              <tbody id="category-table-body" class="divide-y divide-[var(--border)]"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const BUILDING_GFA_M2 = 4800.0;
+    const ROOF_AREA_M2 = 600.0;
+    const BASELINE_REBAR_GWP = 1.99;
+    const EAF_REBAR_GWP = 0.95;
+    const TAIPOWER_GRID_EF = 0.494;
+    const SOLAR_PV_YIELD = 185.0;
+
+    const CATEGORIES = [
+      { id: 'floors', name: 'Floor Slabs (OST_Floors)', shortName: 'Floor Slabs', unit: 'm³', qty: 720.0, rebarRatio: 95.0, baseMatGwp: 320.0, timberGwp: 85.0, isConcrete: true, canTimber: true },
+      { id: 'beams', name: 'Structural Beams (OST_StructuralFraming)', shortName: 'Struct. Beams', unit: 'm³', qty: 480.0, rebarRatio: 130.0, baseMatGwp: 350.0, timberGwp: 95.0, isConcrete: true, canTimber: true },
+      { id: 'columns', name: 'Structural Columns (OST_StructuralColumns)', shortName: 'Struct. Columns', unit: 'm³', qty: 310.0, rebarRatio: 150.0, baseMatGwp: 365.0, timberGwp: 110.0, isConcrete: true, canTimber: false },
+      { id: 'glazing', name: 'Curtain Wall & Windows (OST_CurtainWall)', shortName: 'Glazing & CW', unit: 'm²', qty: 820.0, rebarRatio: 0.0, baseMatGwp: 210.0, timberGwp: 210.0, isConcrete: false, canTimber: false },
+      { id: 'walls', name: 'Exterior Walls (OST_Walls)', shortName: 'Exterior Walls', unit: 'm³', qty: 295.0, rebarRatio: 85.0, baseMatGwp: 315.0, timberGwp: 120.0, isConcrete: true, canTimber: false },
+      { id: 'roofs', name: 'Roof Deck Assembly (OST_Roofs)', shortName: 'Roof Deck', unit: 'm²', qty: 600.0, rebarRatio: 0.0, baseMatGwp: 115.0, timberGwp: 115.0, isConcrete: false, canTimber: false }
+    ];
+
+    function getHeatColor(ratioToBaseline) {
+      if (ratioToBaseline > 0.82) {
+        return { hex: '#ef4444', badge: 'bg-red-500/15 text-red-500 border-red-500/30', label: '🔴 Hotspot' };
+      } else if (ratioToBaseline > 0.62) {
+        return { hex: '#f59e0b', badge: 'bg-amber-500/15 text-amber-500 border-amber-500/30', label: '🟠 Medium' };
+      } else {
+        return { hex: '#10b981', badge: 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30', label: '🟢 Low-Carbon' };
+      }
+    }
+
+    function updateSimulation() {
+      const scmPct = parseFloat(document.getElementById('slider-scm').value);
+      const eafPct = parseFloat(document.getElementById('slider-rebar-eaf').value);
+      const timberPct = parseFloat(document.getElementById('slider-timber').value);
+      const rebarDensityPct = parseFloat(document.getElementById('slider-rebar-density').value);
+      const facadeRedPct = parseFloat(document.getElementById('slider-facade').value);
+      const pvCovPct = parseFloat(document.getElementById('slider-pv').value);
+
+      document.getElementById('lbl-scm').textContent = `${scmPct}% (Concrete GWP -${(scmPct * 0.85).toFixed(0)}%)`;
+      document.getElementById('lbl-rebar-eaf').textContent = `${eafPct}%`;
+      document.getElementById('lbl-timber').textContent = `${timberPct}%`;
+      document.getElementById('lbl-rebar-density').textContent = `${rebarDensityPct}%`;
+      document.getElementById('lbl-facade').textContent = `-${facadeRedPct}%`;
+      document.getElementById('lbl-pv').textContent = `${pvCovPct}% (${Math.round(ROOF_AREA_M2 * pvCovPct / 100)} m²)`;
+
+      const currentRebarGwp = BASELINE_REBAR_GWP * (1 - eafPct / 100.0) + EAF_REBAR_GWP * (eafPct / 100.0);
+      const concreteGwpFactor = 1.0 - (scmPct * 0.0085);
+
+      let totalBaselineTons = 0.0;
+      let totalProposedTons = 0.0;
+      const computedRows = [];
+
+      CATEGORIES.forEach(cat => {
+        let baseKg = cat.qty * cat.baseMatGwp;
+        if (cat.rebarRatio > 0) baseKg += (cat.qty * cat.rebarRatio) * BASELINE_REBAR_GWP;
+        if (cat.id === 'roofs') baseKg = 69000.0;
+
+        let propKg = 0.0;
+        if (cat.isConcrete) {
+          const timberShare = cat.canTimber ? (timberPct / 100.0) : 0.0;
+          const rcShare = 1.0 - timberShare;
+          const rcMatKg = (cat.qty * rcShare) * (cat.baseMatGwp * concreteGwpFactor);
+          const rcRebarKg = (cat.qty * rcShare) * (cat.rebarRatio * (rebarDensityPct / 100.0)) * currentRebarGwp;
+          const timberMatKg = (cat.qty * timberShare) * cat.timberGwp;
+          propKg = rcMatKg + rcRebarKg + timberMatKg;
+        } else if (cat.id === 'glazing') {
+          propKg = baseKg * (1.0 - facadeRedPct / 100.0);
+        } else if (cat.id === 'roofs') {
+          propKg = baseKg * (1.0 - (scmPct * 0.006 + facadeRedPct * 0.003));
+        }
+
+        const baseTons = baseKg / 1000.0;
+        const propTons = propKg / 1000.0;
+        totalBaselineTons += baseTons;
+        totalProposedTons += propTons;
+
+        const redPct = baseTons > 0 ? ((baseTons - propTons) / baseTons * 100.0) : 0.0;
+        const ratio = baseTons > 0 ? (propTons / baseTons) : 1.0;
+
+        computedRows.push({ ...cat, baseTons, propTons, redPct, ratio, heat: getHeatColor(ratio) });
+      });
+
+      const totalRedPct = ((totalBaselineTons - totalProposedTons) / totalBaselineTons) * 100.0;
+      const savedTons = totalBaselineTons - totalProposedTons;
+      const intensityKgM2 = (totalProposedTons * 1000.0) / BUILDING_GFA_M2;
+
+      let mrc2Pts = 0;
+      let tierText = 'MRp2 Prerequisite Met Only (<10%)';
+      let nextTierHint = `${(10.0 - Math.max(0, totalRedPct)).toFixed(1)}% more for 1 pt`;
+      if (totalRedPct >= 40.0) {
+        mrc2Pts = 4; tierText = '🏆 Tier 4 (≥40% Max Decarbonization)'; nextTierHint = 'Maximum 4 / 4 LEED v5 Points Achieved!';
+      } else if (totalRedPct >= 30.0) {
+        mrc2Pts = 3; tierText = 'Tier 3 (≥30% Advanced Reduction)'; nextTierHint = `${(40.0 - totalRedPct).toFixed(1)}% more for 4 pts`;
+      } else if (totalRedPct >= 20.0) {
+        mrc2Pts = 2; tierText = 'Tier 2 (≥20% Significant Reduction)'; nextTierHint = `${(30.0 - totalRedPct).toFixed(1)}% more for 3 pts`;
+      } else if (totalRedPct >= 10.0) {
+        mrc2Pts = 1; tierText = 'Tier 1 (≥10% Base Credit Threshold)'; nextTierHint = `${(20.0 - totalRedPct).toFixed(1)}% more for 2 pts`;
+      }
+
+      const baseDemandKwh = BUILDING_GFA_M2 * 135.0;
+      const annualDemandKwh = baseDemandKwh * (1.0 - (facadeRedPct * 0.0025));
+      const pvYieldKwh = ROOF_AREA_M2 * (pvCovPct / 100.0) * SOLAR_PV_YIELD;
+      const pvOffsetPct = (pvYieldKwh / annualDemandKwh) * 100.0;
+      const netOpCarbonTons = Math.max(0, annualDemandKwh - pvYieldKwh) * TAIPOWER_GRID_EF / 1000.0;
+      const eac1Pts = pvOffsetPct >= 15.0 ? 2 : (pvOffsetPct >= 7.5 ? 1 : 0);
+
+      document.getElementById('kpi-proposed-ec').textContent = totalProposedTons.toFixed(1);
+      document.getElementById('kpi-ec-intensity').textContent = intensityKgM2.toFixed(1);
+      document.getElementById('kpi-reduction-pct').textContent = `${totalRedPct >= 0 ? '-' : '+'}${Math.abs(totalRedPct).toFixed(1)}%`;
+      document.getElementById('kpi-saved-tons').textContent = `(${savedTons.toFixed(1)} t saved)`;
+      document.getElementById('kpi-next-tier-hint').textContent = nextTierHint;
+      document.getElementById('kpi-mrc2-points').textContent = mrc2Pts;
+      document.getElementById('kpi-mrc2-tier-badge').textContent = tierText;
+
+      document.getElementById('kpi-op-carbon').textContent = netOpCarbonTons.toFixed(1);
+      document.getElementById('kpi-pv-kwh').textContent = `${Math.round(pvYieldKwh).toLocaleString()} kWh/yr`;
+      document.getElementById('kpi-pv-offset').textContent = `${pvOffsetPct.toFixed(1)}%`;
+      document.getElementById('kpi-eac1-pts').textContent = `Green Energy +${eac1Pts} pt`;
+
+      const gaugeWidth = Math.min(100, Math.max(2, (totalRedPct / 50.0) * 100.0));
+      document.getElementById('tier-progress-fill').style.width = `${gaugeWidth}%`;
+      document.getElementById('gauge-status-text').textContent =
+        `Current Reduction: ${totalRedPct.toFixed(1)}% — LEED v5 MRc2 Score: ${mrc2Pts} / 4 Points`;
+
+      const mapById = {};
+      computedRows.forEach(r => { mapById[r.id] = r; });
+
+      ['svg-floor-1', 'svg-floor-2', 'svg-floor-3'].forEach(id => document.getElementById(id).setAttribute('fill', mapById.floors.heat.hex));
+      ['svg-beam-1', 'svg-beam-2', 'svg-beam-3', 'svg-beam-4'].forEach(id => document.getElementById(id).setAttribute('stroke', mapById.beams.heat.hex));
+      ['svg-col-1', 'svg-col-2', 'svg-col-3'].forEach(id => document.getElementById(id).setAttribute('stroke', mapById.columns.heat.hex));
+      document.getElementById('svg-glazing').setAttribute('fill', mapById.glazing.heat.hex);
+      document.getElementById('svg-walls').setAttribute('fill', mapById.walls.heat.hex);
+      document.getElementById('svg-roof').setAttribute('fill', mapById.roofs.heat.hex);
+
+      document.getElementById('heatmap-cards-container').innerHTML = computedRows.map(r => `
+        <div class="p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] flex flex-col justify-between">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-xs font-bold truncate">${r.shortName}</span>
+            <span class="px-1.5 py-0.5 text-xs font-semibold rounded border ${r.heat.badge}">${r.heat.label}</span>
+          </div>
+          <div class="flex items-baseline justify-between mt-1.5">
+            <span class="text-sm font-extrabold">${r.propTons.toFixed(1)} <span class="text-xs font-normal text-[var(--muted-foreground)]">t</span></span>
+            <span class="text-xs font-semibold text-emerald-500">-${r.redPct.toFixed(1)}%</span>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('category-table-body').innerHTML = computedRows.map(r => {
+        const barPct = Math.min(100, Math.round((r.propTons / 370.0) * 100));
+        return `
+          <tr>
+            <td class="py-2.5 pr-2 font-semibold">${r.name}</td>
+            <td class="py-2.5 px-2 text-right text-[var(--muted-foreground)]">${r.baseTons.toFixed(1)}</td>
+            <td class="py-2.5 px-2 text-right font-bold">${r.propTons.toFixed(1)}</td>
+            <td class="py-2.5 px-2 text-right font-bold text-emerald-500">-${r.redPct.toFixed(1)}%</td>
+            <td class="py-2.5 pl-2">
+              <div class="w-full h-2.5 bg-[var(--background)] rounded-full overflow-hidden border border-[var(--border)]">
+                <div class="h-full rounded-full transition-all duration-200" style="width: ${barPct}%; background-color: ${r.heat.hex};"></div>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function applyPreset(mode) {
+      const presets = {
+        baseline: [0, 0, 0, 100, 0, 0],
+        tier1: [15, 30, 0, 100, 14, 65],
+        tier2: [30, 60, 10, 95, 25, 70],
+        tier4: [42, 95, 35, 85, 38, 80]
+      };
+      const [scm, eaf, timber, rebar, facade, pv] = presets[mode];
+      document.getElementById('slider-scm').value = scm;
+      document.getElementById('slider-rebar-eaf').value = eaf;
+      document.getElementById('slider-timber').value = timber;
+      document.getElementById('slider-rebar-density').value = rebar;
+      document.getElementById('slider-facade').value = facade;
+      document.getElementById('slider-pv').value = pv;
+      updateSimulation();
+    }
+
+    updateSimulation();
+  </script>
+</body>
+</html>
