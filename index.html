@@ -18,20 +18,24 @@
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6">
   <div class="max-w-7xl mx-auto space-y-5">
 
-    <!-- Top Navigation Bar (Page 1 vs Page 2) -->
-    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <!-- Top Navigation Bar (Page 1, Page 2, Page 3) -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-3 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div class="flex items-center gap-2.5">
         <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
         <span class="font-bold text-sm tracking-wide">CarboRevit • LEED v5 Research Portal</span>
       </div>
       <div class="flex flex-wrap gap-2">
         <button id="nav-btn-page1" onclick="switchPage(1)"
-          class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition">
+          class="px-3.5 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition">
           🎛️ Page 1: Interactive Carbon Simulator
         </button>
         <button id="nav-btn-page2" onclick="switchPage(2)"
-          class="px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition">
+          class="px-3.5 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition">
           📄 Page 2: English Research Proposal (PDF)
+        </button>
+        <button id="nav-btn-page3" onclick="switchPage(3)"
+          class="px-3.5 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition">
+          📽️ Page 3: Simple 15-Slide Presentation
         </button>
       </div>
     </div>
@@ -164,7 +168,6 @@
 
       <!-- Main 2-Column Content -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <!-- Left Column (5 cols): 6 Interactive Design Sliders -->
         <div class="lg:col-span-5 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm space-y-5">
           <div class="border-b border-[var(--border)] pb-3">
             <h2 class="text-base font-bold">🎛️ Early-Stage What-If Decarbonization Sliders</h2>
@@ -252,7 +255,6 @@
           </div>
         </div>
 
-        <!-- Right Column (7 cols): 3D Carbon Heatmap Preview & Category Table -->
         <div class="lg:col-span-7 space-y-5">
           <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -317,8 +319,6 @@
     <!-- PAGE 2: ENGLISH RESEARCH PROPOSAL & LITERATURE REVIEW (PDF + WEB VIEW)  -->
     <!-- ======================================================================= -->
     <div id="page-2-container" class="hidden space-y-5">
-
-      <!-- Page 2 Action Header -->
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30">
@@ -343,7 +343,6 @@
         </div>
       </div>
 
-      <!-- Embedded PDF Viewer Box -->
       <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-[var(--muted-foreground)]">📄 Embedded PDF Preview (Research_Proposal_For_Professor_EN.pdf)</span>
@@ -355,128 +354,313 @@
           <iframe src="Research_Proposal_For_Professor_EN.pdf" class="w-full h-full" title="English Research Proposal PDF"></iframe>
         </div>
       </div>
+    </div>
 
-      <!-- Complete Interactive Web-Rendered Proposal (For Mobile & Instant Reading) -->
-      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm space-y-6">
-        <div class="border-b border-[var(--border)] pb-4">
-          <h2 class="text-lg font-bold text-emerald-500">1. Research Background &amp; Motivation</h2>
-          <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">
-            The U.S. Green Building Council (USGBC) <strong>LEED v5</strong> shifts green building certification from traditional energy cost savings toward <strong>whole-life decarbonization</strong> (accounting for 50% of total points). Quantifying cradle-to-gate (Modules A1–A3) structure and enclosure embodied carbon is now a mandatory prerequisite (<strong>MRp2</strong>), while <strong>MRc2</strong> rewards <strong>10%, 20%, 30%, and 40%</strong> carbon reductions against baseline buildings with 1 to 4 credit points. Furthermore, <strong>EAp1 &amp; EAc1</strong> mandate early operational carbon projections and incentivize on-site renewable energy (Rooftop Solar PV).
-          </p>
-          <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">
-            Up to <strong>80% of embodied carbon reduction potential is locked in during Schematic Design (LOD 100–200)</strong>. However, traditional workflows require exporting Revit schedules to Excel (~16 hours per iteration with a 30% conversion error rate) or exporting <code>gbXML</code> files that frequently fail due to unenclosed early-stage thermal zones.
-          </p>
+    <!-- ======================================================================= -->
+    <!-- PAGE 3: SIMPLE & EASY-TO-UNDERSTAND 15-SLIDE PRESENTATION DECK          -->
+    <!-- ======================================================================= -->
+    <div id="page-3-container" class="hidden space-y-4">
+
+      <!-- Slide Controls Bar -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span id="slide-counter-badge" class="px-3 py-1 text-xs font-extrabold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            Slide 1 / 15
+          </span>
+          <span class="text-xs text-[var(--muted-foreground)]">
+            Simple &amp; Visual Presentation Mode (Use ← / → buttons or keyboard arrows)
+          </span>
         </div>
-
-        <!-- Section 2: 4 Bottlenecks Table -->
-        <div>
-          <h2 class="text-lg font-bold text-emerald-500 mb-3">2. Four Schematic Design (LOD 100–200) Bottlenecks &amp; CarboRevit Solutions</h2>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left border-collapse border border-[var(--border)]">
-              <thead>
-                <tr class="bg-[var(--background)] text-[var(--foreground)] border-b border-[var(--border)]">
-                  <th class="p-3 border-r border-[var(--border)] w-1/4">Early-Stage Bottleneck (LOD 100–200)</th>
-                  <th class="p-3 border-r border-[var(--border)] w-1/3">Why Traditional BIM Workflows Fail</th>
-                  <th class="p-3">CarboRevit Technical Solution</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-[var(--border)]">
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">1. Missing 3D Rebar Geometry<br/><span class="text-red-500 font-normal">(30%–40% Carbon Omission)</span></td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Schematic BIM models only contain rough concrete volumes; 3D reinforcing bars are not modeled until LOD 350+, causing severe underestimation of RC carbon.</td>
-                  <td class="p-3"><strong>Parametric Rebar Ratio Imputation</strong>: Embeds standard structural rebar densities (Column 150, Beam 130, Slab 95 kg/m³) in the database to automatically compute combined concrete + steel carbon.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">2. Unspecified Generic Materials<br/><span class="text-amber-500 font-normal">(Material Uncertainty)</span></td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Architects use generic default Revit materials during massing without specific manufacturer EPDs or LEED v5 baseline references.</td>
-                  <td class="p-3"><strong>Zero-Template Category Mapping &amp; What-If Swap</strong>: Maps <code>BuiltInCategory</code> directly to LEED v5 regional baselines and enables 1-click swaps (High-SCM Slag Concrete, EAF Rebar, CLT Mass Timber).</td>
-                </tr>
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">3. Broken gbXML Energy Exports<br/><span class="text-sky-500 font-normal">(Unenclosed Thermal Zones)</span></td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Frequent massing iterations and unenclosed rooms cause <code>gbXML</code> exports to external BEM engines (IES-VE, EnergyPlus) to fail.</td>
-                  <td class="p-3"><strong>Direct API Envelope &amp; Solar PV Heuristic Engine</strong>: Extracts wall, window, and roof areas directly via Revit API to compute WWR, EUI, and rooftop Solar PV green energy offsets in under 3 seconds.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">4. Blind Design Iteration<br/><span class="text-emerald-500 font-normal">(No Spatial Hotspot Feedback)</span></td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Spreadsheet totals fail to inform architects which specific 3D building elements drive carbon spikes.</td>
-                  <td class="p-3"><strong>In-Viewport 3D Carbon Heatmap</strong>: Uses <code>OverrideGraphicSettings</code> (Röck et al., 2018) to color-code top 20% carbon hotspots in Red, middle 50% in Amber, and lowest 30% in Emerald Green.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Section 3: Golden 3 Papers -->
-        <div>
-          <h2 class="text-lg font-bold text-emerald-500 mb-3">3. Golden 3 Benchmark Papers for Thesis Development</h2>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left border-collapse border border-[var(--border)]">
-              <thead>
-                <tr class="bg-[var(--background)] text-[var(--foreground)] border-b border-[var(--border)]">
-                  <th class="p-3 border-r border-[var(--border)]">Benchmark Role &amp; Authors</th>
-                  <th class="p-3 border-r border-[var(--border)]">Paper Title, Journal &amp; DOI</th>
-                  <th class="p-3 border-r border-[var(--border)]">Methodology Adopted</th>
-                  <th class="p-3">Our Innovation (Research Gap)</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-[var(--border)]">
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">Pillar 1: Plugin Architecture<br/><span class="text-sky-500">Jalaei &amp; Jrade (2015)</span></td>
-                  <td class="p-3 border-r border-[var(--border)]"><em>Integrating BIM and LEED system at the conceptual design stage of sustainable buildings</em> (Sustainable Cities and Society)<br/>DOI: 10.1016/j.scs.2015.06.007</td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Four-tier Revit API (C# .NET) quantity takeoff, external database lookup, and in-Revit automated LEED credit scoring UI.</td>
-                  <td class="p-3">Upgrades legacy LEED v3/v4 rules to <strong>LEED v5 mandatory carbon prerequisites &amp; tiers (MRp2/MRc2 &amp; EAp1)</strong>.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">Pillar 2: 3D Carbon Heatmap<br/><span class="text-emerald-500">Röck et al. (2018)</span></td>
-                  <td class="p-3 border-r border-[var(--border)]"><em>LCA and BIM: Visualization of environmental potentials in building construction at early design stages</em> (Building and Environment)<br/>DOI: 10.1016/j.buildenv.2018.05.006</td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Early-stage BIM element-to-LCA mapping formulation and <strong>3D viewport color-coding (3D Heatmap)</strong> to identify high-impact hotspots.</td>
-                  <td class="p-3">Couples 3D visualization directly with <strong>LEED v5 Baseline percentage reduction tiers (10%/20%/30%/40%)</strong>.</td>
-                </tr>
-                <tr>
-                  <td class="p-3 border-r border-[var(--border)] font-bold">Pillar 3: Carbon Swap Case Study<br/><span class="text-amber-500">Alzara et al. (2023) &amp; Hsieh (NTU, 2026)</span></td>
-                  <td class="p-3 border-r border-[var(--border)]"><em>Dynamo script and a BIM-based process for measuring embodied carbon in buildings during the design phase</em> (Int. J. Low-Carbon Technologies)<br/>DOI: 10.1093/ijlct/ctad053</td>
-                  <td class="p-3 border-r border-[var(--border)] text-[var(--muted-foreground)]">Embodied carbon CSV database structure, early-stage structural rebar estimation, and Chapter 5 element breakdown &amp; material swap comparison charts.</td>
-                  <td class="p-3">Unifies <strong>Upfront Embodied Carbon (MR)</strong> and <strong>Rooftop Solar PV Operational Green Energy (EA)</strong> in one native plugin.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Section 4: Key Questions for Advisor -->
-        <div>
-          <h2 class="text-lg font-bold text-emerald-500 mb-2">4. Key Questions for Advisor Discussion</h2>
-          <ul class="list-disc list-inside text-xs md:text-sm text-[var(--muted-foreground)] space-y-1.5">
-            <li><strong>Research Scope Weighting</strong>: Focusing ~80% of the thesis on Phase 1 (Schematic Design LOD 200 Embodied Carbon MRp2/MRc2, parametric rebar imputation, 3D Heatmap, and What-If material swap) with Phase 2 (Operational Green Energy EAp1/EAc1) as a complementary module.</li>
-            <li><strong>Database Architecture</strong>: Using the curated local CSV baseline (<code>leed_v5_carbon_baseline.csv</code> combining CLF/EC3 &amp; local ABRI factors) for offline reliability during the MVP stage.</li>
-            <li><strong>Element Scope</strong>: Targeting the top 6 Revit categories (Floors, Beams, Columns, Walls, Glazing, Roofs) representing &gt;80% of building carbon impact.</li>
-            <li><strong>Plugin Implementation Framework</strong>: Choosing between our completed <code>pyRevit (Python)</code> prototype vs. compiled <code>C# .NET (IExternalCommand)</code> add-in for final demonstration.</li>
-          </ul>
+        <div class="flex items-center gap-2">
+          <button onclick="changeSlide(-1)" class="px-3.5 py-1.5 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] hover:opacity-80 transition">
+            ← Prev Slide
+          </button>
+          <button onclick="changeSlide(1)" class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition">
+            Next Slide →
+          </button>
         </div>
       </div>
 
+      <!-- Main Slide Stage -->
+      <div id="slide-stage" class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 md:p-10 shadow-sm min-h-[420px] flex flex-col justify-between">
+        <!-- Populated dynamically by renderCurrentSlide() -->
+      </div>
+
+      <!-- Easy Bilingual Speaker Note Box (1-minute plain explanation for presenting) -->
+      <div class="bg-[var(--card)] border border-emerald-500/30 rounded-xl p-4 shadow-sm">
+        <div class="text-xs font-bold text-emerald-400 mb-1">💡 一句話白話講稿提示 (Easy Speaker Note for Presentation):</div>
+        <div id="slide-speaker-note" class="text-xs md:text-sm text-[var(--foreground)] leading-relaxed"></div>
+      </div>
+
+      <!-- Quick Slide Thumbnail Pills -->
+      <div id="slide-pills" class="flex flex-wrap gap-1.5"></div>
     </div>
 
   </div>
 
   <script>
+    // =========================================================================
+    // SIMPLE 15-SLIDE DECK DATA (Short, Visual, Easy-to-Understand English)
+    // =========================================================================
+    const SLIDES_DATA = [
+      {
+        part: "AEC COMPUTATIONAL TOOL PROPOSAL • STAGE 1",
+        title: "CarboRevit: LEED v5 Decarbonization Plugin",
+        subtitle: "1-Click Carbon & Green Energy Calculator Inside Autodesk Revit",
+        cards: [
+          { tag: "Part A", title: "Why LEED v5?", desc: "New green building rules require upfront carbon calculation at early design." },
+          { tag: "Part B", title: "Revit Plugin", desc: "Built directly inside Revit using Python (pyRevit) & C# .NET API." },
+          { tag: "Part C", title: "Our Solution", desc: "1-Click carbon score, 3D red/green heatmap, and instant material swaps." }
+        ],
+        note: "【白話講稿】老師、各位同學好，我們要開發的是 CarboRevit：一個裝在 Revit 裡面的外掛，讓建築師在設計一開始就能一鍵算出最新 LEED v5 的碳排放與綠能分數。<br/>(English: Today we present CarboRevit—a native Revit plugin that lets architects calculate LEED v5 carbon and green energy scores in one click during early design.)"
+      },
+      {
+        part: "PART A • LEED V5 DECARBONIZATION",
+        title: "What Changed in LEED v5?",
+        subtitle: "Shifting from 'Saving Electricity Bills' to 'Cutting Total Carbon'",
+        cards: [
+          { tag: "Mandatory Rule (MRp2)", title: "Must Count Material Carbon", desc: "Every project must calculate carbon from concrete, steel, and glass." },
+          { tag: "Score Tiers (MRc2)", title: "10% / 20% / 40% Cut = Points", desc: "Cut carbon by 10% (1 pt), 20% (2 pts), 30% (3 pts), or 40% (4 pts max)." },
+          { tag: "Green Energy (EAp1)", title: "Operational Carbon & Solar", desc: "Tracks annual electricity carbon and rewards rooftop solar PV panels." }
+        ],
+        note: "【白話講稿】以前的 LEED 只看省多少電費，但最新 LEED v5 規定：一定要算「建材本身的碳排（MRp2）」，而且只要比基準建築減碳 10%、20% 到 40%，就能拿到 1 到 4 分。<br/>(English: Unlike older versions that focused on energy cost, LEED v5 makes embodied carbon mandatory and rewards 10% to 40% carbon cuts with up to 4 points.)"
+      },
+      {
+        part: "PART A • EARLY STAGE IMPACT",
+        title: "Why Focus on Early Design (Schematic Stage)?",
+        subtitle: "80% of Carbon Reduction Potential is Decided at the Beginning",
+        cards: [
+          { tag: "80% Impact", title: "Schematic Design (LOD 200)", desc: "Changing concrete or timber early is easy, cheap, and saves huge carbon." },
+          { tag: "Too Late", title: "Construction Drawings (LOD 400)", desc: "Once structural drawings are finished, materials cannot be changed." },
+          { tag: "Our Target", title: "Instant Early Feedback", desc: "Give architects carbon numbers while they are still sketching the 3D mass." }
+        ],
+        note: "【白話講稿】建築有 80% 的減碳空間在「前期概念設計（LOD 200）」就決定了！等畫完施工圖再算碳排已經改不動了，所以我們的工具專門針對前期設計。<br/>(English: 80% of a building's carbon reduction potential is locked in during early schematic design. Waiting until construction drawings is too late.)"
+      },
+      {
+        part: "PART A • EARLY DESIGN PROBLEMS & SOLUTIONS (NEW)",
+        title: "4 Early-Stage BIM Problems & How We Fix Them",
+        subtitle: "Solving the Real Bottlenecks Architects Face at LOD 200",
+        cards: [
+          { tag: "Fix #1: Missing Rebar", title: "Auto-Adds Steel Ratio", desc: "Early models only have concrete blocks. We auto-add standard rebar (kg/m³) so 35% steel carbon isn't missed." },
+          { tag: "Fix #2: No Material Info", title: "Auto-Baseline + 1-Click Swap", desc: "Early walls use generic defaults. We auto-match LEED baselines and let users test low-carbon concrete in 1 click." },
+          { tag: "Fix #3 & #4: Broken Exports", title: "No gbXML + 3D Red Heatmap", desc: "Skips broken gbXML exports by reading roof/window areas directly, and colors high-carbon 3D parts Red." }
+        ],
+        note: "【白話講稿】前期模型有四大問題：第一、沒畫鋼筋（會漏算35%碳排），我們用「標準含鋼率公式」自動補上；第二、材質未定，我們提供一鍵替換；第三、不需匯出容易破面的 gbXML；第四、直接在 3D 畫面把高碳排構件塗成紅色！<br/>(English: Early BIM models lack 3D rebar and detailed materials. Our plugin auto-imputes rebar ratios, maps baselines automatically, skips broken gbXML exports, and highlights hotspots in 3D.)"
+      },
+      {
+        part: "PART A • KEY LITERATURE & INNOVATION (NEW)",
+        title: "3 Benchmark Studies vs. CarboRevit",
+        subtitle: "Building on Top SCI Papers to Create Our Thesis Contribution",
+        cards: [
+          { tag: "Jalaei & Jrade (2015)", title: "1. Revit API LEED Plugin", desc: "Taught us how to build a C# Revit plugin for LEED—we upgrade it from old LEED v3/v4 to LEED v5." },
+          { tag: "Röck et al. (2018)", title: "2. 3D Carbon Heatmap", desc: "Taught us how to color 3D BIM elements by carbon impact—we link it to LEED v5 10%/20%/40% score tiers." },
+          { tag: "Alzara et al. (2023)", title: "3. Material Swap Case Study", desc: "Taught us how to compare material swaps—we combine Embodied Carbon (MR) + Solar Green Energy (EA)." }
+        ],
+        note: "【白話講稿】我們的論文建立在三篇頂尖文獻上：參考 Jalaei (2015) 的 Revit 外掛架構、參考 Röck (2018) 的 3D 碳排熱區著色法、以及 Alzara (2023) 的材料替換實驗，並全面升級支援最新 LEED v5。<br/>(English: Our research builds on three core papers: Jalaei 2015 for plugin architecture, Röck 2018 for 3D heatmaps, and Alzara 2023 for material swaps—upgraded for LEED v5.)"
+      },
+      {
+        part: "PART B • STANDARD REVIT PLUGIN",
+        title: "How CarboRevit Works Inside Revit",
+        subtitle: "Three Native Revit API Features",
+        cards: [
+          { tag: "1. Geometry Extractor", title: "FilteredElementCollector", desc: "Automatically grabs volumes (m³) and areas (m²) of columns, beams, floors, walls, windows, and roofs." },
+          { tag: "2. In-App Panel", title: "Dockable Scorecard UI", desc: "Shows live LEED v5 points right next to the Revit 3D viewport." },
+          { tag: "3. Data Storage", title: "Shared Parameters", desc: "Saves carbon numbers and EPD status directly inside each BIM element." }
+        ],
+        note: "【白話講稿】在技術上，我們透過 Revit API 的 FilteredElementCollector 自動抓取柱、樑、樓板、外牆與屋頂的體積與面積，直接顯示在 Revit 視窗內。<br/>(English: Technically, we use Revit's FilteredElementCollector to extract element volumes and areas automatically and display scores inside a dockable panel.)"
+      },
+      {
+        part: "PART B • IMPLEMENTATION STANDARD",
+        title: "Two Development Frameworks Ready",
+        subtitle: "Comparing pyRevit (Python) vs. C# .NET Add-In",
+        cards: [
+          { tag: "Option 1: Rapid MVP", title: "pyRevit (Python Script)", desc: "Fast to edit and test without restarting Revit. Great for academic formula verification." },
+          { tag: "Option 2: Production", title: "C# .NET Add-In (WPF)", desc: "Compiled .dll plugin with high speed for large models and native dockable windows." },
+          { tag: "Decoupled Data", title: "Local CSV Carbon Database", desc: "Follows our Midterm 'Content-Presentation Decoupling' principle—update carbon factors in CSV without touching code!" }
+        ],
+        note: "【白話講稿】我們目前已經同時寫好 Python (pyRevit) 與 C# 兩種版本的原型，而且延續我們期中報告「資料與程式分離（Decoupling）」的精神，把碳排係數獨立放在 CSV 表中。<br/>(English: We have prepared both pyRevit Python and C# .NET prototypes, keeping carbon factors decoupled in a clean CSV database just like our midterm JSON architecture.)"
+      },
+      {
+        part: "PART C • CURRENT SITUATION",
+        title: "Why Current Manual Workflows Fail",
+        subtitle: "The Disconnected Excel & EPD Lookup Cycle",
+        cards: [
+          { tag: "Step 1: Manual Export", title: "Dump Schedules to Excel", desc: "Architects manually export multiple schedules every time the design changes." },
+          { tag: "Step 2: Manual Lookup", title: "Search External EPD Tables", desc: "Manually matching materials and converting ft³ to m³ or kg causes frequent mistakes." },
+          { tag: "Step 3: Too Late", title: "Weeks-Late Feedback", desc: "By the time the carbon report is ready, the building design is already frozen." }
+        ],
+        note: "【白話講稿】現在業界算碳排非常痛苦：每次改圖都要手動匯出 Excel、人工查表換算單位，等算出來都已經過好幾週了。<br/>(English: Currently, teams export schedules to Excel and manually look up EPD factors—a slow, error-prone process that delivers feedback weeks too late.)"
+      },
+      {
+        part: "PART C • OBSERVED EVIDENCE",
+        title: "The Cost of Manual Carbon Calculation",
+        subtitle: "Comparing Manual Excel Takeoff vs. CarboRevit Plugin",
+        cards: [
+          { tag: "16 Hours Wasted", title: "Manual Takeoff Time", desc: "Average time spent exporting and cleaning Excel sheets per design iteration." },
+          { tag: "30% Error Rate", title: "Unit & Material Mismatches", desc: "Mistakes from converting imperial/metric units and missing rebar weight." },
+          { tag: "0 Seconds (Instant)", title: "CarboRevit 1-Click Result", desc: "Instant feedback right inside Revit while the architect is modeling." }
+        ],
+        note: "【白話講稿】數據顯示傳統手動算一次要花 16 小時，且有 30% 的單位換算失誤率；用我們的外掛只要按一下，0 秒就能在模型裡看到結果。<br/>(English: Manual takeoffs waste 16 hours per iteration with a 30% mismatch rate. CarboRevit reduces this to instant, zero-second feedback inside Revit.)"
+      },
+      {
+        part: "PART C • COMPUTATIONAL SOLUTION",
+        title: "3 Core Features of CarboRevit",
+        subtitle: "What the Architect Sees & Uses in Revit",
+        cards: [
+          { tag: "Feature 1", title: "1-Click Volume & Area Parser", desc: "Reads all structural & envelope elements and adds rebar carbon automatically." },
+          { tag: "Feature 2", title: "3D Carbon Heatmap", desc: "Colors the top 20% carbon hotspots Red, medium Amber, and low-carbon Green in 3D." },
+          { tag: "Feature 3", title: "What-If Material Swap", desc: "Live sliders to swap normal concrete for slag concrete, EAF rebar, or CLT timber." }
+        ],
+        note: "【白話講稿】我們外掛有三大功能：第一「一鍵解析體積與含鋼率」、第二「3D 紅黃綠碳排熱區圖」、第三「What-If 低碳材料即時替換模擬」。<br/>(English: CarboRevit delivers three features: 1-Click geometry & rebar parsing, an in-viewport 3D Carbon Heatmap, and live What-If material swaps.)"
+      },
+      {
+        part: "PART C • SYSTEM ARCHITECTURE",
+        title: "4-Step Automated Pipeline",
+        subtitle: "From Revit 3D Geometry to LEED v5 Scorecard",
+        cards: [
+          { tag: "1. Input & 2. Engine", title: "Revit Model → API Parser", desc: "Extracts Floors, Beams, Columns, Walls, Windows & Roofs + converts ft³ to m³." },
+          { tag: "3. Benchmark DB", title: "LEED v5 CSV Baseline", desc: "Matches element categories with CLF/EC3 & Taiwan ABRI carbon factors + rebar ratios." },
+          { tag: "4. Visual Output", title: "Scorecard + 3D Heatmap", desc: "Displays % reduction, LEED v5 points (0–4 pts), solar PV offset, and colors the 3D view." }
+        ],
+        note: "【白話講稿】這是系統的四步驟流程：從 Revit 讀取幾何 → API 自動換算公制單位 → 比對 CSV 碳排基準表 → 輸出 LEED v5 分數與 3D 彩色熱區圖。<br/>(English: Our four-step pipeline flows from Revit geometry extraction to API unit conversion, CSV baseline matching, and 3D heatmap + scorecard output.)"
+      },
+      {
+        part: "PART C • CASE STUDY VERIFICATION",
+        title: "8-Story Office Building Simulation Results",
+        subtitle: "Testing CarboRevit on a 4,800 m² RC Building Model",
+        cards: [
+          { tag: "Baseline Building", title: "1,248.4 tCO₂e (0 Points)", desc: "Floors (29%), Beams (23%), and Columns (16%) drive nearly 70% of total carbon." },
+          { tag: "Original Proposed", title: "1,057.1 tCO₂e (-15.3% → 1 pt)", desc: "Modest material improvements pass the 10% Tier 1 threshold for 1 LEED point." },
+          { tag: "What-If Low-Carbon Swap", title: "686.7 tCO₂e (-45.0% → 4 pts!)", desc: "Swapping to high-slag concrete + EAF rebar + CLT slabs earns the maximum 4 LEED v5 points!" }
+        ],
+        note: "【白話講稿】我們用一棟 8 層樓辦公大樓實測：原本基準碳排是 1,248 噸，透過外掛找出樓板與樑柱是紅色熱點，一鍵替換為低碳混凝土與再生鋼筋後，碳排大減 45%，直接拿滿 LEED v5 最高的 4 分！（等一下我會在 Page 1 現場拉動拉桿示範給大家看）<br/>(English: On our 8-story test building, swapping the red hotspot slabs and beams to low-carbon concrete and EAF rebar cuts carbon by 45%—jumping from 1 point to the maximum 4 LEED v5 points!)"
+      },
+      {
+        part: "DISCUSSION & ADVISOR FEEDBACK",
+        title: "3 Key Decisions for Advisor Discussion",
+        subtitle: "Confirming Scope for Our Master's Thesis & MVP",
+        cards: [
+          { tag: "Question 1: Database", title: "Local CSV vs. Cloud API", desc: "We recommend using our local CSV baseline first for 100% offline reliability and Taiwan factor support." },
+          { tag: "Question 2: BIM Scope", title: "Top 6 Structural & Envelope Parts", desc: "Focusing on Floors, Beams, Columns, Walls, Glazing & Roofs (>80% of building carbon)." },
+          { tag: "Question 3: Code Stack", title: "pyRevit vs. C# .NET Add-In", desc: "Both scripts are ready—confirming which UI format is preferred for final defense." }
+        ],
+        note: "【白話講稿】最後有三個問題想請教老師：第一、先採用離線穩定的本地端 CSV 碳排資料庫；第二、範圍鎖定佔碳排 80% 以上的六大構件；第三、確認最終展示以 pyRevit 還是 C# 介面為主。<br/>(English: We seek advisor feedback on three choices: using our reliable local CSV database, focusing on the top 6 structural/envelope categories, and selecting between pyRevit or C# WPF for final presentation.)"
+      },
+      {
+        part: "LIVE WEB DEMO & GITHUB REPOSITORY",
+        title: "Try Our Live Interactive Simulator Now!",
+        subtitle: "Switch to Page 1 above to drag the LEED v5 Carbon Sliders live",
+        cards: [
+          { tag: "Live Page 1", title: "6 Interactive Carbon Sliders", desc: "Drag concrete SCM %, EAF rebar %, CLT timber %, and Solar PV % in real time." },
+          { tag: "Live Page 2", title: "Full English Proposal PDF", desc: "Read or download our complete 6-page Master's Research Proposal PDF & Word doc." },
+          { tag: "Open Source", title: "GitHub & CSV Decoupling", desc: "Hosted on GitHub Pages with clean CSV database decoupling." }
+        ],
+        note: "【白話講稿】接下來我直接切換到網站頂部的「Page 1: Interactive Carbon Simulator」，現場拉動拉桿示範如何從 0 分調到 4 分滿分！<br/>(English: Now let's switch to Page 1 of our live website to demonstrate the interactive LEED v5 carbon sliders and 3D heatmap in real time!)"
+      },
+      {
+        part: "STAGE 1 & 2 CONCEPT PROPOSAL",
+        title: "Thank You — Questions & Discussion",
+        subtitle: "Chu-Shian Tsau (M11513039) • Khaing Thinzar (D11513802) • Chin-Yi Yang (R14544029)",
+        cards: [
+          { tag: "Click Above", title: "🎛️ Go to Page 1 (Simulator)", desc: "Test live What-If material swaps and 3D Carbon Heatmap." },
+          { tag: "Click Above", title: "📄 Go to Page 2 (Proposal PDF)", desc: "Review full literature table, equations, and advisor questions." },
+          { tag: "Desktop File", title: "📊 PowerPoint (.PPTX) Ready", desc: "All 15 slides are also saved in CarboRevit_ LEED v5 Decarbonization Plugin.pptx." }
+        ],
+        note: "【白話講稿】感謝老師與各位同學的聆聽！現在我們可以切到 Page 1 現場操作拉桿，也歡迎老師給予指導。<br/>(English: Thank you for listening! We welcome your feedback and questions as we switch to the live simulator.)"
+      }
+    ];
+
+    let currentSlideIdx = 0;
+
+    function renderCurrentSlide() {
+      const s = SLIDES_DATA[currentSlideIdx];
+      document.getElementById('slide-counter-badge').textContent = `Slide ${currentSlideIdx + 1} / ${SLIDES_DATA.length}`;
+      document.getElementById('slide-speaker-note').innerHTML = s.note;
+
+      const cardsHtml = s.cards.map((c, idx) => {
+        const borderColors = [
+          'border-l-4 border-l-emerald-500',
+          'border-l-4 border-l-sky-500',
+          'border-l-4 border-l-amber-500'
+        ];
+        const tagColors = [
+          'text-emerald-400 bg-emerald-500/10',
+          'text-sky-400 bg-sky-500/10',
+          'text-amber-400 bg-amber-500/10'
+        ];
+        return `
+          <div class="bg-[var(--background)] border border-[var(--border)] ${borderColors[idx % 3]} rounded-xl p-5 flex flex-col justify-between space-y-3">
+            <div>
+              <span class="px-2.5 py-0.5 text-xs font-bold rounded ${tagColors[idx % 3]}">${c.tag}</span>
+              <h3 class="text-base md:text-lg font-bold mt-2.5">${c.title}</h3>
+              <p class="text-xs md:text-sm text-[var(--muted-foreground)] mt-2 leading-relaxed">${c.desc}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('slide-stage').innerHTML = `
+        <div>
+          <div class="text-xs font-extrabold tracking-wider text-emerald-400 uppercase">${s.part}</div>
+          <h2 class="text-2xl md:text-3xl font-extrabold mt-2">${s.title}</h2>
+          <p class="text-sm md:text-base text-[var(--muted-foreground)] mt-1">${s.subtitle}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+          ${cardsHtml}
+        </div>
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)] pt-3 border-t border-[var(--border)]">
+          <span>CarboRevit: LEED v5 Decarbonization Plugin</span>
+          <span>Slide ${currentSlideIdx + 1} of ${SLIDES_DATA.length}</span>
+        </div>
+      `;
+
+      // Render slide pills
+      document.getElementById('slide-pills').innerHTML = SLIDES_DATA.map((item, i) => `
+        <button onclick="goToSlide(${i})"
+          class="px-2.5 py-1 text-xs font-bold rounded-md border transition ${i === currentSlideIdx ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-[var(--card)] border-[var(--border)] text-[var(--muted-foreground)] hover:text-[var(--foreground)]'}">
+          ${i + 1}
+        </button>
+      `).join('');
+    }
+
+    function changeSlide(delta) {
+      currentSlideIdx = (currentSlideIdx + delta + SLIDES_DATA.length) % SLIDES_DATA.length;
+      renderCurrentSlide();
+    }
+
+    function goToSlide(idx) {
+      currentSlideIdx = idx;
+      renderCurrentSlide();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const p3 = document.getElementById('page-3-container');
+      if (!p3.classList.contains('hidden')) {
+        if (e.key === 'ArrowRight') changeSlide(1);
+        if (e.key === 'ArrowLeft') changeSlide(-1);
+      }
+    });
+
     function switchPage(pageNum) {
       const p1 = document.getElementById('page-1-container');
       const p2 = document.getElementById('page-2-container');
+      const p3 = document.getElementById('page-3-container');
       const btn1 = document.getElementById('nav-btn-page1');
       const btn2 = document.getElementById('nav-btn-page2');
+      const btn3 = document.getElementById('nav-btn-page3');
 
-      if (pageNum === 1) {
-        p1.classList.remove('hidden');
-        p2.classList.add('hidden');
-        btn1.className = 'px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition';
-        btn2.className = 'px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition';
-      } else {
-        p1.classList.add('hidden');
-        p2.classList.remove('hidden');
-        btn2.className = 'px-4 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition';
-        btn1.className = 'px-4 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition';
-      }
+      const activeClass = 'px-3.5 py-2 text-xs font-bold rounded-lg bg-emerald-500 text-white shadow-sm transition';
+      const inactiveClass = 'px-3.5 py-2 text-xs font-bold rounded-lg border border-[var(--border)] bg-[var(--background)] text-[var(--foreground)] hover:opacity-80 transition';
+
+      p1.classList.toggle('hidden', pageNum !== 1);
+      p2.classList.toggle('hidden', pageNum !== 2);
+      p3.classList.toggle('hidden', pageNum !== 3);
+
+      btn1.className = (pageNum === 1) ? activeClass : inactiveClass;
+      btn2.className = (pageNum === 2) ? activeClass : inactiveClass;
+      btn3.className = (pageNum === 3) ? activeClass : inactiveClass;
+
+      if (pageNum === 3) renderCurrentSlide();
     }
 
     const BUILDING_GFA_M2 = 4800.0;
@@ -658,6 +842,7 @@
     }
 
     updateSimulation();
+    renderCurrentSlide();
   </script>
 </body>
 </html>
