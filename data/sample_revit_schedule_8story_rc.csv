@@ -1,0 +1,7 @@
+ElementId,BuiltInCategory,CategoryName,FamilyAndType,Level,Unit,Quantity,MaterialGWP,RebarRatio_kg_m3
+104201,OST_Floors,Floor Slabs,RC_Slab_180mm_4000psi,1F-8F,m3,720.0,320.0,95.0
+104352,OST_StructuralFraming,Structural Beams,RC_Girder_500x800mm,1F-8F,m3,480.0,350.0,130.0
+104510,OST_StructuralColumns,Structural Columns,RC_Column_700x700mm,1F-8F,m3,310.0,365.0,150.0
+104890,OST_CurtainWall,Curtain Wall & Windows,Double_LowE_Unitized_CW,1F-8F,m2,820.0,210.0,0.0
+105112,OST_Walls,Exterior Walls,RC_Exterior_Wall_200mm,1F-8F,m3,295.0,315.0,85.0
+105400,OST_Roofs,Roof Deck Assembly,Flat_RC_Roof_Insulated,RF,m2,600.0,115.0,0.0

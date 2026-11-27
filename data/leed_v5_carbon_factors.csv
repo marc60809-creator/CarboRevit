@@ -1,0 +1,7 @@
+category_id,revit_category,display_name,unit,baseline_gwp_per_unit,timber_alt_gwp_per_unit,default_rebar_ratio_kg_m3,baseline_rebar_gwp,eaf_rebar_gwp,is_concrete,can_timber_swap,source_reference
+floors,OST_Floors,Floor Slabs (OST_Floors),m3,320.0,85.0,95.0,1.99,0.95,true,true,CLF v2026 / Taiwan ABRI 3000psi RC
+beams,OST_StructuralFraming,Structural Beams (OST_StructuralFraming),m3,350.0,95.0,130.0,1.99,0.95,true,true,CLF v2026 / Taiwan ABRI 4000psi RC
+columns,OST_StructuralColumns,Structural Columns (OST_StructuralColumns),m3,365.0,110.0,150.0,1.99,0.95,true,false,CLF v2026 / Taiwan ABRI 5000psi RC
+glazing,OST_CurtainWall,Curtain Wall & Windows (OST_CurtainWall),m2,210.0,210.0,0.0,1.99,0.95,false,false,EC3 Double Low-E Curtain Wall Baseline
+walls,OST_Walls,Exterior Walls (OST_Walls),m3,315.0,120.0,85.0,1.99,0.95,true,false,CLF v2026 / Taiwan ABRI Exterior RC Wall
+roofs,OST_Roofs,Roof Deck Assembly (OST_Roofs),m2,115.0,115.0,0.0,1.99,0.95,false,false,LEED v5 BD+C Insulated Roof Deck Baseline
